@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+<body>
+ 
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+
+        <div id="chart"></div>
+
+        <div class="form-group">
+          <label>Subscribe Key</label>
+          <input type="text" class="form-control" id="subscribe-key" value="sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe">
+        </div>
+
+        <div class="form-group">
+          <label>Channel</label>
+          <input type="text" class="form-control" id="channel" value="pubnub-sensor-network">
+        </div>
+
+        <div class="form-group">
+          <label>Chart Type</label>
+          <select class="form-control" id="chart-type">
+            <option value="spline">Spline</option>
+            <option value="bar">Bar</option>
+            <option value="donut">Donut</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-default" id="submit">Submit</button>
+
+      </div>
+    </div>
+  </div> 
+
+  <script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"></script>
+  <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+  <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+
+  <script type="text/javascript">
+
+  var refresh = function function_name () {
+
+    var options = {
+      type: $('#chart-type').val(),
+      channel: $('#channel').val(),
+      subscribe_key: $('#subscribe-key').val()
+    }
+
+    var pubnub = PUBNUB.init({
+      subscribe_key: options.subscribe_key
+    });
+
+    var flow = false;
+    if(options.type == "spline") {
+      flow = true;
+    }
+    
+    eon.chart({
+      pubnub: pubnub,
+      channel: options.channel,
+      history: true,
+      flow: flow,
+      generate: {
+        bindto: '#chart',
+        data: {
+          type: options.type
+        },
+        bar: {
+          width: {
+            ratio: 0.5 // this makes bar width 50% of length between ticks
+          }
+        }
+      },
+      transform: function(message) {
+        return {
+          type: 'bar',
+          columns: [
+            ['Humidity', message.humidity],
+            ['Temperature', message.ambient_temperature],
+            ['Radiation', message.radiation_level],
+            ['Light', message.photosensor]
+          ]
+        };
+      }
+    });
+
+  }
+
+  $('#chart-type').change(function(e) {
+    refresh();
+  });
+
+  $('#submit').click(function(e) {
+    refresh();
+    return false;
+  });
+
+  refresh();
+
+  </script>
+
+</body>
+</html>
