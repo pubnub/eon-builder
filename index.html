@@ -29,21 +29,69 @@
           </select>
         </div>
 
+        <label>Data</label>
+        <div class="form-group">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+            </tr>
+          </thead>
+          <tbody id="kvs">
+          </tbody>
+        </table>
+        </div>
+
         <button type="submit" class="btn btn-default" id="submit">Submit</button>
 
       </div>
     </div>
   </div> 
 
-  <script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"></script>
-  <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+  
+  <script src="./bower_components/pubnub/web/pubnub.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="./bower_components/c3/c3.min.css">
+  <script src="./bower_components/d3/d3.min.js"></script>
+  <script src="./bower_components/c3/c3.min.js"></script>
+  <script src="./bower_components/subsub/subsub.js"></script>
+
   <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
 
+  <script type="text/javascript" src="./bower_components/eon-chart/pubnub-c3.js"></script>
+
   <script type="text/javascript">
 
+  var flattenObject = function(ob) {
+    
+    var toReturn = {};
+    
+    for (var i in ob) {
+      if (!ob.hasOwnProperty(i)) continue;
+      
+      if ((typeof ob[i]) == 'object') {
+        var flatObject = flattenObject(ob[i]);
+        for (var x in flatObject) {
+          if (!flatObject.hasOwnProperty(x)) continue;
+          
+          toReturn[i + '.' + x] = flatObject[x];
+        }
+      } else {
+        toReturn[i] = ob[i];
+      }
+    }
+    
+    return toReturn;
+
+  };
+
+  var cols = [];
+  var chart = null;
   var refresh = function function_name () {
+
+    console.log('woot')
 
     var options = {
       type: $('#chart-type').val(),
@@ -55,12 +103,16 @@
       subscribe_key: options.subscribe_key
     });
 
+    var pedit = PUBNUB.init({
+      subscribe_key: options.subscribe_key
+    });
+
     var flow = false;
     if(options.type == "spline") {
       flow = true;
     }
-    
-    eon.chart({
+
+    chart = eon.chart({
       pubnub: pubnub,
       channel: options.channel,
       history: true,
@@ -72,20 +124,58 @@
         },
         bar: {
           width: {
-            ratio: 0.5 // this makes bar width 50% of length between ticks
+            ratio: 0.5
           }
         }
       },
       transform: function(message) {
+
+        var array = cols.map(function(arg){
+          return [arg, message[arg]];
+        });
+
         return {
-          type: 'bar',
-          columns: [
-            ['Humidity', message.humidity],
-            ['Temperature', message.ambient_temperature],
-            ['Radiation', message.radiation_level],
-            ['Light', message.photosensor]
-          ]
+          columns: array
         };
+
+      }
+    });
+
+    pedit.subscribe({
+      channel: options.channel,
+      message: function(data) {
+
+        var data = flattenObject(data);
+
+        for(var key in data) {
+
+          var $row = $('.key-'+key);
+
+          var value = JSON.stringify(data[key]);
+
+          if($row.length) {
+
+            $row.find('.val').text(value)
+
+          } else {
+
+            var $row = $('\
+              <tr class="key-' + key + '"> \
+                <td class="key">' + key + '</td> \
+                <td class="val">' + value + '</td> \
+              </tr>');
+           
+            $row.click(function(){
+              $(this).addClass('info');
+              cols.push($(this).find('.key').text());
+            });
+
+            $('#kvs').append($row);
+
+          }
+
+        }
+
       }
     });
 
