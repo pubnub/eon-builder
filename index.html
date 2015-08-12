@@ -1,35 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style type="text/css">
+  #chart-wrapper {
+    position: fixed;
+  }
+  #chart {
+    height: 300px;
+    width: 500px;
+  }
+  </style>
 </head>
 <body>
  
   <div class="container">
     <div class="row">
-      <div class="col-md-12">
-
-        <div id="chart"></div>
+      <div class="col-md-6">
 
         <div class="form-group">
           <label>Subscribe Key</label>
+          <p class="text-muted">The PubNub subscribe key.</p>
           <input type="text" class="form-control" id="subscribe-key" value="sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe">
         </div>
 
         <div class="form-group">
           <label>Channel</label>
+          <p class="text-muted">The PubNub channel where your data is being published.</p>
           <input type="text" class="form-control" id="channel" value="pubnub-sensor-network">
         </div>
 
-        <div class="form-group">
-          <label>Chart Type</label>
-          <select class="form-control" id="chart-type">
-            <option value="spline">Spline</option>
-            <option value="bar">Bar</option>
-            <option value="donut">Donut</option>
-          </select>
-        </div>
-
         <label>Data</label>
+        <p class="text-muted">Click on a row to start seeing it output to the chart.</p>
+
         <div class="form-group">
         <table class="table table-bordered table-striped">
           <thead>
@@ -43,8 +45,52 @@
         </table>
         </div>
 
-        <button type="submit" class="btn btn-default" id="submit">Submit</button>
+        <div class="form-group">
+          <label>Chart Type</label>
+          <p class="text-muted">Time series, bar, donut, your call.</p>
+          <select class="form-control" id="chart-type">
+            <option value="spline">Spline</option>
+            <option value="area">Area</option>
+            <option value="area-spline">Area Spline</option>
+            <option value="step">Step</option>
+            <option value="area-step">Area Step</option>
+            <option value="scatter">Scatter</option>
+            <option value="bar">Bar</option>
+            <option value="donut">Donut</option>
+            <option value="pie">Pie</option>
+            <option value="gauge">Gauge</option>
+          </select>
+        </div>
 
+        <div class="form-group">
+          <label>Update Rate (ms)</label>
+          <p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten. If the chart updates before new data is received, data will remain stagnant.</p>
+          <input type="text" class="form-control" id="rate" value="1000">
+        </div>
+
+        <div class="form-group">
+          <label>Animation (ms)</label>
+          <p class="text-muted">How long each animation will last.</p>
+          <input type="text" class="form-control" id="duration" value="250">
+        </div>
+
+        <div class="form-group">
+          <label>Limit</label>
+          <p class="text-muted">How many data points to display.</p>
+          <input type="text" class="form-control" id="limit" value="5">
+        </div>
+
+        <div class="form-group">
+          <input type="checkbox" id="history" checked>  <label>History</label>
+          <p class="text-muted">Use PubNub history to populate the chart on load</p>
+        </div>
+
+      </div>
+      <div class="col-md-6">
+        <div id="chart-wrapper">
+          <button type="submit" class="btn btn-default" id="submit">Update</button>
+          <div id="chart"></div>
+        </div>
       </div>
     </div>
   </div> 
@@ -96,7 +142,11 @@
     var options = {
       type: $('#chart-type').val(),
       channel: $('#channel').val(),
-      subscribe_key: $('#subscribe-key').val()
+      subscribe_key: $('#subscribe-key').val(),
+      rate: $('#rate').val(),
+      duration: $('#duration').val(),
+      limit: $('#limit').val(),
+      history: $('#history').is(':checked') || false
     }
 
     var pubnub = PUBNUB.init({
@@ -108,7 +158,13 @@
     });
 
     var flow = false;
-    if(options.type == "spline") {
+    if(options.type == "spline" ||
+      options.type == "area" ||
+      options.type == "area-spline" ||
+      options.type == "step" ||
+      options.type == "area-step" ||
+      options.type == "scatter"
+      ) {
       flow = true;
     }
 
@@ -117,10 +173,15 @@
       channel: options.channel,
       history: true,
       flow: flow,
+      rate: options.rate,
+      limit: options.limit,
       generate: {
         bindto: '#chart',
         data: {
           type: options.type
+        },
+        transition: {
+          duration: options.duration
         },
         bar: {
           width: {
@@ -166,8 +227,27 @@
               </tr>');
            
             $row.click(function(){
-              $(this).addClass('info');
-              cols.push($(this).find('.key').text());
+
+              var thisKey = $(this).find('.key').text();
+              if($(this).hasClass('info')){
+
+                $(this).removeClass('info');
+                for(var i in cols) {
+
+                  if(cols[i] == thisKey) {
+                    cols.splice(i, 1);
+                    refresh();
+                  }
+
+                }
+
+              } else {
+
+                $(this).addClass('info');
+                cols.push(thisKey);
+                 
+              }
+
             });
 
             $('#kvs').append($row);
