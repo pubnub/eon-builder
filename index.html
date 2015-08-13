@@ -30,7 +30,7 @@
         </div>
 
         <label>Data</label>
-        <p class="text-muted">Click on a row to start seeing it output to the chart.</p>
+        <p class="text-muted">Click on a row to start seeing it output to the chart. Note that only integer values are shown here.</p>
 
         <div class="form-group">
         <table class="table table-bordered table-striped">
@@ -94,7 +94,6 @@
       </div>
     </div>
   </div> 
-
   
   <script src="./bower_components/pubnub/web/pubnub.min.js"></script>
   <link rel="stylesheet" type="text/css" href="./bower_components/c3/c3.min.css">
@@ -170,6 +169,11 @@
       flow = true;
     }
 
+    if(options.type == "gauge") {
+      cols = [];
+      $('tr').removeClass('info');
+    }
+
     chart = eon.chart({
       pubnub: pubnub,
       channel: options.channel,
@@ -213,10 +217,7 @@
         for(var key in data) {
 
           var $row = $('.key-'+key);
-
           var value = data[key];
-
-          console.log(value)
 
           if(!isNaN(value)) {
 
@@ -248,6 +249,12 @@
                   }
 
                 } else {
+
+                  if($('#chart-type').val() == "gauge") {
+                    cols = [];
+                    $('tr').removeClass('info');
+                    refresh();
+                  }
 
                   $(this).addClass('info');
                   cols.push(thisKey);
