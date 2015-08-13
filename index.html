@@ -133,11 +133,13 @@
 
   };
 
+  function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
   var cols = [];
   var chart = null;
   var refresh = function function_name () {
-
-    console.log('woot')
 
     var options = {
       type: $('#chart-type').val(),
@@ -212,45 +214,51 @@
 
           var $row = $('.key-'+key);
 
-          var value = JSON.stringify(data[key]);
+          var value = data[key];
 
-          if($row.length) {
+          console.log(value)
 
-            $row.find('.val').text(value)
+          if(!isNaN(value)) {
 
-          } else {
+            if($row.length) {
 
-            var $row = $('\
-              <tr class="key-' + key + '"> \
-                <td class="key">' + key + '</td> \
-                <td class="val">' + value + '</td> \
-              </tr>');
-           
-            $row.click(function(){
+              $row.find('.val').text(value)
 
-              var thisKey = $(this).find('.key').text();
-              if($(this).hasClass('info')){
+            } else {
 
-                $(this).removeClass('info');
-                for(var i in cols) {
+              var $row = $('\
+                <tr class="key-' + key + '"> \
+                  <td class="key">' + key + '</td> \
+                  <td class="val">' + value + '</td> \
+                </tr>');
+             
+              $row.click(function() {
 
-                  if(cols[i] == thisKey) {
-                    cols.splice(i, 1);
-                    refresh();
+                var thisKey = $(this).find('.key').text();
+                if($(this).hasClass('info')){
+
+                  $(this).removeClass('info');
+                  for(var i in cols) {
+
+                    if(cols[i] == thisKey) {
+                      cols.splice(i, 1);
+                      refresh();
+                    }
+
                   }
 
+                } else {
+
+                  $(this).addClass('info');
+                  cols.push(thisKey);
+                   
                 }
 
-              } else {
+              });
 
-                $(this).addClass('info');
-                cols.push(thisKey);
-                 
-              }
+              $('#kvs').append($row);
 
-            });
-
-            $('#kvs').append($row);
+            }
 
           }
 
