@@ -1,0 +1,34 @@
+<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"></script>
+<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+<div id="chart"></div>
+<script type="text/javascript">
+var pubnub = PUBNUB.init({
+  subscribe_key: "sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe"
+});
+var cols = ["order_quantity","bid_price"];
+chart = eon.chart({
+  pubnub: pubnub,
+  channel: "pubnub-market-orders",
+  history: true,
+  flow: false,
+  rate: 1000,
+  limit: 5,
+  generate: {
+    bindto: "#chart",
+    data: {
+      type: "bar"
+    },
+    transition: {
+      duration: 250
+    },
+  },
+  transform: function(message) {
+    var array = cols.map(function(arg){
+      return [arg, message[arg]];
+    });
+    return {
+      columns: array
+    };
+  }
+});
+</script>

@@ -90,6 +90,7 @@
         <div id="chart-wrapper">
           <button type="submit" class="btn btn-default" id="submit">Update</button>
           <div id="chart"></div>
+          <textarea id="embed" class="form-control" style="height: 500px"></textarea>
         </div>
       </div>
     </div>
@@ -109,6 +110,7 @@
 
   <script type="text/javascript">
 
+  /*
   var flattenObject = function(ob) {
     
     var toReturn = {};
@@ -131,13 +133,14 @@
     return toReturn;
 
   };
+  */
 
   function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
-  var cols = [];
   var chart = null;
+  var cols = [];
   var refresh = function function_name () {
 
     var options = {
@@ -188,11 +191,6 @@
         },
         transition: {
           duration: options.duration
-        },
-        bar: {
-          width: {
-            ratio: 0.5
-          }
         }
       },
       transform: function(message) {
@@ -208,11 +206,54 @@
       }
     });
 
+    var genEmbed = function() {
+
+      var embedsrc = '' +
+        '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"><\/script>\n' +
+        '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
+        '<div id="chart"></div>\n' + 
+        '<script type="text/javascript">\n' +
+        'var pubnub = PUBNUB.init({\n' +
+        '  subscribe_key: "' + options.subscribe_key + '"\n' +
+        '});\n' +
+        'var cols = ' + '["' + cols.join('","') + '"];' + '\n' +
+        'chart = eon.chart({\n' +
+        '  pubnub: pubnub,\n' +
+        '  channel: "' + options.channel + '",\n' +
+        '  history: ' + options.history + ',\n' +
+        '  flow: ' + flow +',\n' +
+        '  rate: ' + options.rate + ',\n' +
+        '  limit: ' + options.limit + ',\n' +
+        '  generate: {\n' +
+        '    bindto: "#chart",\n' +
+        '    data: {\n' +
+        '      type: "' + options.type + '"\n' +
+        '    },\n' +
+        '    transition: {\n' +
+        '      duration: ' + options.duration + '\n' +
+        '    },\n' +
+        '  },\n' +
+        '  transform: function(message) {\n' +
+        '    var array = cols.map(function(arg){\n' +
+        '      return [arg, message[arg]];\n' +
+        '    });\n' +
+        '    return {\n' + 
+        '      columns: array\n' +
+        '    };\n' +
+        '  }\n' + 
+        '});\n' +
+        '<\/script>';
+
+      $('#embed').val(embedsrc)
+
+    };
+    genEmbed();
+    
     pedit.subscribe({
       channel: options.channel,
       message: function(data) {
 
-        var data = flattenObject(data);
+        // var data = flattenObject(data);
 
         for(var key in data) {
 
@@ -258,6 +299,7 @@
 
                   $(this).addClass('info');
                   cols.push(thisKey);
+                  genEmbed();
                    
                 }
 
@@ -274,16 +316,24 @@
       }
     });
 
+    $('#submit').click(function(e) {
+      pedit.unsubscribe({
+        channel: options.channel
+      });
+      pubnub.unsubscribe({
+        channel: options.channel
+      });
+      $('#kvs').empty(); 
+      refresh();
+      cols = [];
+      return false;
+    });
+
+    $('#chart-type').change(function(e) {
+      refresh();
+    });
+
   }
-
-  $('#chart-type').change(function(e) {
-    refresh();
-  });
-
-  $('#submit').click(function(e) {
-    refresh();
-    return false;
-  });
 
   refresh();
 
