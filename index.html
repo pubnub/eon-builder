@@ -203,6 +203,11 @@
 
   var refresh = function() {
 
+
+    // when you click submit, the page refreshes properly but is
+    // then loaded with old data?
+
+
     var options = {
       type: $('#chart-type').val(),
       channel: $('#channel').val(),
@@ -215,6 +220,7 @@
       ylabel: $('#ylabel').val(),
       flow: false
     }
+    console.log(options)
 
     var pubnub = PUBNUB.init({
       subscribe_key: options.subscribe_key
@@ -369,21 +375,25 @@
       }
     });
 
+    $('#submit').click(function(e) {
+
+      pedit.unsubscribe({
+        channel: $('#channel').val()
+      })
+
+      $('#kvs').empty(); 
+      cols = [];
+      refresh();
+
+      return false;
+
+    });
+
+    $('#chart-type').change(function(e) {
+      refresh();
+    });
+
   }
-
-  $('#submit').click(function(e) {
-
-    $('#kvs').empty(); 
-    cols = [];
-    refresh();
-
-    return false;
-
-  });
-
-  $('#chart-type').change(function(e) {
-    refresh();
-  });
 
   var pubnub3 = PUBNUB.init({
     subscribe_key: 'demo'
@@ -402,10 +412,6 @@
           a: Math.random() * 100,
           b: Math.random() * 100,
           c: Math.random() * 100,
-          a2: Math.random() * 100,
-          b2: Math.random() * 100,
-          c2: Math.random() * 100,
-          a3: Math.random() * 100
         }
       });
     }, 1000)
