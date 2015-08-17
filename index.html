@@ -220,6 +220,7 @@
         '  generate: {\n' +
         '    bindto: "#chart",\n' +
         '    data: {\n' +
+        '      colors: ' + JSON.stringify(colors) + ',\n' + 
         '      type: "' + options.type + '"\n' +
         '    },\n' +
         '    transition: {\n' +
@@ -324,6 +325,7 @@
               })
 
               $('#kvs').append($row);
+              genEmbed();
 
             }
 

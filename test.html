@@ -5,7 +5,7 @@
 var pubnub = PUBNUB.init({
   subscribe_key: "demo"
 });
-var cols = ["something","something_else.another_thing.value"];
+var cols = ["something","something_else.another_thing.value","a","b","c","a2","b2","c2","a3"];
 chart = eon.chart({
   pubnub: pubnub,
   channel: "eon-builder",
@@ -16,6 +16,7 @@ chart = eon.chart({
   generate: {
     bindto: "#chart",
     data: {
+      colors: {"something":"#01A4A4","something_else.another_thing.value":"#00A1CB","a":"#61AE24","b":"#D0D102","c":"#32742C","a2":"#D70060","b2":"#E54028","c2":"#F18D05","a3":"#113F8C"},
       type: "spline"
     },
     transition: {
