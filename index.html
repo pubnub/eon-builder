@@ -7,15 +7,20 @@
   }
   #chart {
     height: 300px;
-    width: 500px;
+    width: 350px;
+  }
+  .container-fluid {
+    width: 90%;
+    margin-left: 5%;
+    margin-right: 5%;
   }
   </style>
 </head>
 <body>
  
-  <div class="container">
+  <div class="container-fluid">
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-9">
 
         <div class="form-group">
           <label>Subscribe Key</label>
@@ -38,6 +43,8 @@
             <tr>
               <th>Key</th>
               <th>Value</th>
+              <th>Color</th>
+              <th>Graph</th>
             </tr>
           </thead>
           <tbody id="kvs">
@@ -58,7 +65,6 @@
             <option value="bar">Bar</option>
             <option value="donut">Donut</option>
             <option value="pie">Pie</option>
-            <option value="gauge">Gauge</option>
           </select>
         </div>
 
@@ -86,7 +92,7 @@
         </div>
 
       </div>
-      <div class="col-md-6">
+      <div class="col-md-3">
         <div id="chart-wrapper">
           <button type="submit" class="btn btn-default" id="submit">Update</button>
           <div id="chart"></div>
@@ -102,6 +108,13 @@
   <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
+
+  <link rel="stylesheet" type="text/css" href="./bower_components/mjolnic-bootstrap-colorpicker/dist/css/bootstrap-colorpicker.min.css">
+  <script type="text/javascript" src="./bower_components/mjolnic-bootstrap-colorpicker/dist/js/bootstrap-colorpicker.min.js"></script>
+
+  <link href="./bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="./bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
+
   <script type="text/javascript">
 
   function isNumber(n) {
@@ -110,6 +123,7 @@
 
   var chart = null;
   var cols = [];
+  var colors = {};
   var refresh = function function_name () {
 
     var options = {
@@ -141,11 +155,6 @@
       flow = true;
     }
 
-    if(options.type == "gauge") {
-      cols = [];
-      $('tr').removeClass('info');
-    }
-
     chart = eon.chart({
       pubnub: pubnub,
       channel: options.channel,
@@ -156,13 +165,16 @@
       generate: {
         bindto: '#chart',
         data: {
-          type: options.type
+          type: options.type,
+          colors: colors
         },
         transition: {
           duration: options.duration
         }
       },
       transform: function(message) {
+
+        var message = eon.c.flatten(message);
 
         var array = cols.map(function(arg){
           return [arg, message[arg]];
@@ -227,14 +239,10 @@
 
         for(var key in data) {
 
-          console.log(key)
-
           var $row = $('[data-key="' + key + '"]');
           var value = data[key];
 
           if(!isNaN(value)) {
-
-            console.log($row)
 
             if($row.length) {
 
@@ -242,42 +250,62 @@
 
             } else {
 
+              cols.push(key);
+
               var $row = $('\
                 <tr data-key="' + key + '"> \
                   <td class="key">' + key + '</td> \
                   <td class="val">' + value + '</td> \
+                  <td> \
+                    <div class="input-group colorpick" data-key="' + key + '"> \
+                        <input type="text" value="" class="form-control" /> \
+                        <span class="input-group-addon"><i></i></span> \
+                    </div> \
+                  </td> \
+                  <td> \
+                  <input type="checkbox" class="toggle" checked data-toggle="toggle"> \
+                  </td> \
                 </tr>');
-             
-              $row.click(function() {
 
-                var thisKey = $(this).find('.key').text();
-                if($(this).hasClass('info')){
+              $row.find('.colorpick').colorpicker().on('changeColor.colorpicker', function(event){
+                colors[$(this).closest('tr').attr('data-key')] = event.color.toHex();
+                refresh();
+              });
 
-                  $(this).removeClass('info');
-                  for(var i in cols) {
+              $row.find('.toggle').bootstrapToggle('on');
 
-                    if(cols[i] == thisKey) {
-                      cols.splice(i, 1);
-                      refresh();
+              $row.find('.toggle').change(function() {
+
+                console.log('called', $(this))
+                
+                var thisKey = $(this).closest('tr').attr('data-key');
+                var isChecked = $(this).prop('checked');
+
+                if(typeof (isChecked) !== "undefined") {
+
+                  if(isChecked){
+
+                    cols.push(thisKey);
+                    genEmbed();
+
+                  } else {
+
+                    for(var i in cols) {
+
+                      if(cols[i] == thisKey) {
+                        cols.splice(i, 1);
+                        refresh();
+                      }
+
                     }
-
+                     
                   }
-
-                } else {
-
-                  if($('#chart-type').val() == "gauge") {
-                    cols = [];
-                    $('tr').removeClass('info');
-                    refresh();
-                  }
-
-                  $(this).addClass('info');
-                  cols.push(thisKey);
-                  genEmbed();
+                  console.log(isChecked)
+                  console.log(cols)
                    
                 }
 
-              });
+              })
 
               $('#kvs').append($row);
 
@@ -307,9 +335,16 @@
       refresh();
     });
 
+  }
+
+
+
+  var pubnub3 = PUBNUB.init({
+    subscribe_key: 'demo'
+  });
 
     setInterval(function(){
-      pubnub.publish({
+      pubnub3.publish({
         channel: 'eon-builder',
         message: {
           something: 1,
@@ -320,9 +355,7 @@
           }
         }
       });
-    }, 1000)
-
-  }
+    }, 250)
 
   refresh();
 
