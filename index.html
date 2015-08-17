@@ -121,6 +121,18 @@
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
 
+  var defaultColors = [
+    '#113F8C',
+    '#01A4A4',
+    '#00A1CB',
+    '#61AE24',
+    '#D0D102',
+    '#32742C',
+    '#D70060',
+    '#E54028',
+    '#F18D05'
+  ];
+
   var chart = null;
   var cols = [];
   var colors = {};
@@ -229,8 +241,9 @@
       $('#embed').val(embedsrc)
 
     };
-    genEmbed();
     
+    genEmbed();
+
     pedit.subscribe({
       channel: options.channel,
       message: function(data) {
@@ -252,13 +265,15 @@
 
               cols.push(key);
 
+              var color = defaultColors[$('tr').length % defaultColors.length];
+
               var $row = $('\
                 <tr data-key="' + key + '"> \
                   <td class="key">' + key + '</td> \
                   <td class="val">' + value + '</td> \
                   <td> \
                     <div class="input-group colorpick" data-key="' + key + '"> \
-                        <input type="text" value="" class="form-control" /> \
+                        <input type="text" value="' + color + '" class="form-control" /> \
                         <span class="input-group-addon"><i></i></span> \
                     </div> \
                   </td> \
@@ -267,16 +282,19 @@
                   </td> \
                 </tr>');
 
-              $row.find('.colorpick').colorpicker().on('changeColor.colorpicker', function(event){
+              var picker = $row.find('.colorpick').colorpicker();
+
+              colors[key] = color;
+              picker.on('changeColor.colorpicker', function(event){
+                
                 colors[$(this).closest('tr').attr('data-key')] = event.color.toHex();
                 refresh();
+
               });
 
               $row.find('.toggle').bootstrapToggle('on');
 
               $row.find('.toggle').change(function() {
-
-                console.log('called', $(this))
                 
                 var thisKey = $(this).closest('tr').attr('data-key');
                 var isChecked = $(this).prop('checked');
@@ -300,8 +318,6 @@
                     }
                      
                   }
-                  console.log(isChecked)
-                  console.log(cols)
                    
                 }
 
@@ -352,10 +368,17 @@
             another_thing: {
               value: Math.random() * 100
             }
-          }
+          },
+          a: Math.random() * 100,
+          b: Math.random() * 100,
+          c: Math.random() * 100,
+          a2: Math.random() * 100,
+          b2: Math.random() * 100,
+          c2: Math.random() * 100,
+          a3: Math.random() * 100
         }
       });
-    }, 250)
+    }, 1000)
 
   refresh();
 
