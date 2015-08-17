@@ -69,6 +69,16 @@
         </div>
 
         <div class="form-group">
+          <label>X Axis Label</label>
+          <input type="text" class="form-control" id="xlabel" value="">
+        </div>
+
+        <div class="form-group">
+          <label>Y Axis Label</label>
+          <input type="text" class="form-control" id="ylabel" value="">
+        </div>
+
+        <div class="form-group">
           <label>Update Rate (ms)</label>
           <p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten. If the chart updates before new data is received, data will remain stagnant.</p>
           <input type="text" class="form-control" id="rate" value="1000">
@@ -133,10 +143,65 @@
     '#F18D05'
   ];
 
+
+
   var chart = null;
   var cols = [];
   var colors = {};
-  var refresh = function function_name () {
+
+  var genEmbed = function(options) {
+
+    var embedsrc = '' +
+      '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"><\/script>\n' +
+      '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
+      '<div id="chart"></div>\n' + 
+      '<script type="text/javascript">\n' +
+      'var pubnub = PUBNUB.init({\n' +
+      '  subscribe_key: "' + options.subscribe_key + '"\n' +
+      '});\n' +
+      'var cols = ' + '["' + cols.join('","') + '"];' + '\n' +
+      'chart = eon.chart({\n' +
+      '  pubnub: pubnub,\n' +
+      '  channel: "' + options.channel + '",\n' +
+      '  history: ' + options.history + ',\n' +
+      '  flow: ' + options.flow +',\n' +
+      '  rate: ' + options.rate + ',\n' +
+      '  limit: ' + options.limit + ',\n' +
+      '  generate: {\n' +
+      '    bindto: "#chart",\n' +
+      '    data: {\n' +
+      '      colors: ' + JSON.stringify(colors) + ',\n' + 
+      '      type: "' + options.type + '"\n' +
+      '    },\n' +
+      '    transition: {\n' +
+      '      duration: ' + options.duration + '\n' +
+      '    },\n' +
+      '    axis: {\n' +
+      '      x: {\n' +
+      '        label: "' + options.xlabel + '"\n' +
+      '      },\n' +
+      '      y: {\n' +
+      '        label: "' + options.ylabel + '"\n' +
+      '      }\n' +
+      '    }\n' +
+      '  },\n' +
+      '  transform: function(message) {\n' +
+      '    var message = eon.c.flatten(message);\n' + 
+      '    var array = cols.map(function(arg){\n' +
+      '      return [arg, message[arg]];\n' +
+      '    });\n' +
+      '    return {\n' + 
+      '      columns: array\n' +
+      '    };\n' +
+      '  }\n' + 
+      '});\n' +
+      '<\/script>';
+
+    $('#embed').val(embedsrc)
+
+  };
+
+  var refresh = function() {
 
     var options = {
       type: $('#chart-type').val(),
@@ -145,7 +210,10 @@
       rate: $('#rate').val(),
       duration: $('#duration').val(),
       limit: $('#limit').val(),
-      history: $('#history').is(':checked') || false
+      history: $('#history').is(':checked') || false,
+      xlabel: $('#xlabel').val(),
+      ylabel: $('#ylabel').val(),
+      flow: false
     }
 
     var pubnub = PUBNUB.init({
@@ -156,7 +224,6 @@
       subscribe_key: options.subscribe_key
     });
 
-    var flow = false;
     if(options.type == "spline" ||
       options.type == "area" ||
       options.type == "area-spline" ||
@@ -164,14 +231,14 @@
       options.type == "area-step" ||
       options.type == "scatter"
       ) {
-      flow = true;
+      options.flow = true;
     }
 
     chart = eon.chart({
       pubnub: pubnub,
       channel: options.channel,
       history: true,
-      flow: flow,
+      flow: options.flow,
       rate: options.rate,
       limit: options.limit,
       generate: {
@@ -182,8 +249,17 @@
         },
         transition: {
           duration: options.duration
+        },
+        axis: {
+          x: {
+            label: options.xlabel
+          },
+          y: {
+            label: options.ylabel
+          }
         }
       },
+
       transform: function(message) {
 
         var message = eon.c.flatten(message);
@@ -198,52 +274,9 @@
 
       }
     });
-
-    var genEmbed = function() {
-
-      var embedsrc = '' +
-        '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"><\/script>\n' +
-        '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
-        '<div id="chart"></div>\n' + 
-        '<script type="text/javascript">\n' +
-        'var pubnub = PUBNUB.init({\n' +
-        '  subscribe_key: "' + options.subscribe_key + '"\n' +
-        '});\n' +
-        'var cols = ' + '["' + cols.join('","') + '"];' + '\n' +
-        'chart = eon.chart({\n' +
-        '  pubnub: pubnub,\n' +
-        '  channel: "' + options.channel + '",\n' +
-        '  history: ' + options.history + ',\n' +
-        '  flow: ' + flow +',\n' +
-        '  rate: ' + options.rate + ',\n' +
-        '  limit: ' + options.limit + ',\n' +
-        '  generate: {\n' +
-        '    bindto: "#chart",\n' +
-        '    data: {\n' +
-        '      colors: ' + JSON.stringify(colors) + ',\n' + 
-        '      type: "' + options.type + '"\n' +
-        '    },\n' +
-        '    transition: {\n' +
-        '      duration: ' + options.duration + '\n' +
-        '    },\n' +
-        '  },\n' +
-        '  transform: function(message) {\n' +
-        '    var message = eon.c.flatten(message);\n' + 
-        '    var array = cols.map(function(arg){\n' +
-        '      return [arg, message[arg]];\n' +
-        '    });\n' +
-        '    return {\n' + 
-        '      columns: array\n' +
-        '    };\n' +
-        '  }\n' + 
-        '});\n' +
-        '<\/script>';
-
-      $('#embed').val(embedsrc)
-
-    };
     
-    genEmbed();
+    console.log(options)
+    genEmbed(options);
 
     pedit.subscribe({
       channel: options.channel,
@@ -305,7 +338,7 @@
                   if(isChecked){
 
                     cols.push(thisKey);
-                    genEmbed();
+                    genEmbed(options);
 
                   } else {
 
@@ -325,7 +358,7 @@
               })
 
               $('#kvs').append($row);
-              genEmbed();
+              genEmbed(options);
 
             }
 
@@ -336,26 +369,21 @@
       }
     });
 
-    $('#submit').click(function(e) {
-      pedit.unsubscribe({
-        channel: options.channel
-      });
-      pubnub.unsubscribe({
-        channel: options.channel
-      });
-      $('#kvs').empty(); 
-      refresh();
-      cols = [];
-      return false;
-    });
-
-    $('#chart-type').change(function(e) {
-      refresh();
-    });
-
   }
 
+  $('#submit').click(function(e) {
 
+    $('#kvs').empty(); 
+    cols = [];
+    refresh();
+
+    return false;
+
+  });
+
+  $('#chart-type').change(function(e) {
+    refresh();
+  });
 
   var pubnub3 = PUBNUB.init({
     subscribe_key: 'demo'
