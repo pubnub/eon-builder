@@ -96,42 +96,13 @@
     </div>
   </div> 
   
-  <script src="./bower_components/pubnub/web/pubnub.min.js"></script>
-  <link rel="stylesheet" type="text/css" href="./bower_components/c3/c3.min.css">
-  <script src="./bower_components/d3/d3.min.js"></script>
-  <script src="./bower_components/c3/c3.min.js"></script>
-  <script src="./bower_components/subsub/subsub.js"></script>
+  <script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"></script>
+  <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
 
   <script type="text/javascript" src="./bower_components/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="./bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="./bower_components/bootstrap/dist/css/bootstrap.min.css">
-
-  <script type="text/javascript" src="./bower_components/eon-chart/pubnub-c3.js"></script>
-
   <script type="text/javascript">
-
-  var flattenObject = function(ob) {
-    
-    var toReturn = {};
-    
-    for (var i in ob) {
-      if (!ob.hasOwnProperty(i)) continue;
-      
-      if ((typeof ob[i]) == 'object') {
-        var flatObject = flattenObject(ob[i]);
-        for (var x in flatObject) {
-          if (!flatObject.hasOwnProperty(x)) continue;
-          
-          toReturn[i + '.' + x] = flatObject[x];
-        }
-      } else {
-        toReturn[i] = ob[i];
-      }
-    }
-    
-    return toReturn;
-
-  };
 
   function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -232,6 +203,7 @@
         '    },\n' +
         '  },\n' +
         '  transform: function(message) {\n' +
+        '    var message = eon.c.flatten(message);\n' + 
         '    var array = cols.map(function(arg){\n' +
         '      return [arg, message[arg]];\n' +
         '    });\n' +
@@ -251,7 +223,7 @@
       channel: options.channel,
       message: function(data) {
 
-        var data = flattenObject(data);
+        var data = eon.c.flatten(data);
 
         for(var key in data) {
 

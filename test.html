@@ -3,26 +3,27 @@
 <div id="chart"></div>
 <script type="text/javascript">
 var pubnub = PUBNUB.init({
-  subscribe_key: "sub-c-4377ab04-f100-11e3-bffd-02ee2ddab7fe"
+  subscribe_key: "demo"
 });
-var cols = ["order_quantity","bid_price"];
+var cols = ["something","something_else.another_thing.value"];
 chart = eon.chart({
   pubnub: pubnub,
-  channel: "pubnub-market-orders",
+  channel: "eon-builder",
   history: true,
-  flow: false,
+  flow: true,
   rate: 1000,
   limit: 5,
   generate: {
     bindto: "#chart",
     data: {
-      type: "bar"
+      type: "spline"
     },
     transition: {
       duration: 250
     },
   },
   transform: function(message) {
+    var message = eon.c.flatten(message);
     var array = cols.map(function(arg){
       return [arg, message[arg]];
     });
