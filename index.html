@@ -20,13 +20,13 @@
         <div class="form-group">
           <label>Subscribe Key</label>
           <p class="text-muted">The PubNub subscribe key.</p>
-          <input type="text" class="form-control" id="subscribe-key" value="sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe">
+          <input type="text" class="form-control" id="subscribe-key" value="demo">
         </div>
 
         <div class="form-group">
           <label>Channel</label>
           <p class="text-muted">The PubNub channel where your data is being published.</p>
-          <input type="text" class="form-control" id="channel" value="pubnub-sensor-network">
+          <input type="text" class="form-control" id="channel" value="eon-builder">
         </div>
 
         <label>Data</label>
@@ -110,7 +110,6 @@
 
   <script type="text/javascript">
 
-  /*
   var flattenObject = function(ob) {
     
     var toReturn = {};
@@ -133,7 +132,6 @@
     return toReturn;
 
   };
-  */
 
   function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
@@ -253,14 +251,18 @@
       channel: options.channel,
       message: function(data) {
 
-        // var data = flattenObject(data);
+        var data = flattenObject(data);
 
         for(var key in data) {
 
-          var $row = $('.key-'+key);
+          console.log(key)
+
+          var $row = $('[data-key="' + key + '"]');
           var value = data[key];
 
           if(!isNaN(value)) {
+
+            console.log($row)
 
             if($row.length) {
 
@@ -269,7 +271,7 @@
             } else {
 
               var $row = $('\
-                <tr class="key-' + key + '"> \
+                <tr data-key="' + key + '"> \
                   <td class="key">' + key + '</td> \
                   <td class="val">' + value + '</td> \
                 </tr>');
@@ -332,6 +334,21 @@
     $('#chart-type').change(function(e) {
       refresh();
     });
+
+
+    setInterval(function(){
+      pubnub.publish({
+        channel: 'eon-builder',
+        message: {
+          something: 1,
+          something_else: {
+            another_thing: {
+              value: Math.random() * 100
+            }
+          }
+        }
+      });
+    }, 1000)
 
   }
 
