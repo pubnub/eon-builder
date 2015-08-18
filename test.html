@@ -5,10 +5,10 @@
 var pubnub = PUBNUB.init({
   subscribe_key: "demo"
 });
-var cols = ["something","something_else.another_thing.value","a","b","c","a2","b2","c2","a3","something","something_else.another_thing.value","a","b","c","a2","b2","c2","a3"];
+var cols = ["something","something_else.another_thing.value","a","b","c","a2","b2","c2","a3","b3","c3","a4","b4","c4","a5","b5","c5"];
 chart = eon.chart({
   pubnub: pubnub,
-  channel: "eon-builder",
+  channel: "eon-builder22",
   history: true,
   flow: true,
   rate: 1000,
@@ -16,7 +16,7 @@ chart = eon.chart({
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"something":"#01A4A4","something_else.another_thing.value":"#00A1CB","a":"#61AE24","b":"#D0D102","c":"#32742C","a2":"#D70060","b2":"#E54028","c2":"#F18D05","a3":"#113F8C"},
+      colors: {"something":"#01A4A4","something_else.another_thing.value":"#00A1CB","a":"#61AE24","b":"#D0D102","c":"#32742C","a2":"#D70060","b2":"#E54028","c2":"#F18D05","a3":"#113F8C","b3":"#01A4A4","c3":"#00A1CB","a4":"#61AE24","b4":"#D0D102","c4":"#32742C","a5":"#D70060","b5":"#E54028","c5":"#F18D05"},
       type: "spline"
     },
     transition: {
