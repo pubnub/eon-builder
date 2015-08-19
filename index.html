@@ -39,7 +39,7 @@
               <tr>
                 <td>Subscribe Key</td>
                 <td>
-                  <a href="#" id="subscribe-key" data-type="text" data-title="Enter new subscribe key.">demo</a> 
+                  <a href="#" id="subscribe_key" data-type="text" data-title="Enter new subscribe key." class="subscribe_key"></a> 
                 </td>
                 <td>
                   <p class="text-muted">The PubNub subscribe key.</p>
@@ -48,7 +48,7 @@
               <tr>
                 <td>Channel</td>
                 <td>
-                  <a href="#" id="channel" data-type="text" data-title="Enter new PubNub channel.">eon-builder</a> 
+                  <a href="#" id="channel" data-type="text" data-title="Enter new PubNub channel." class="channel"></a> 
                 </td>
                 <td>
                   <p class="text-muted">The PubNub channel where your data is being published.</p>
@@ -159,6 +159,40 @@
 
   <script type="text/javascript">
 
+  function updateQueryStringParameter(uri, key, value) {
+    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+      return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    else {
+      return uri + separator + key + "=" + value;
+    }
+  }
+  
+  var QueryString = function () {
+    // This function is anonymous, is executed immediately and 
+    // the return value is assigned to QueryString!
+    var query_string = {};
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+      var pair = vars[i].split("=");
+          // If first entry with this name
+      if (typeof query_string[pair[0]] === "undefined") {
+        query_string[pair[0]] = decodeURIComponent(pair[1]);
+          // If second entry with this name
+      } else if (typeof query_string[pair[0]] === "string") {
+        var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+        query_string[pair[0]] = arr;
+          // If third or later entry with this name
+      } else {
+        query_string[pair[0]].push(decodeURIComponent(pair[1]));
+      }
+    } 
+      return query_string;
+  }();
+
   function isNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n);
   }
@@ -174,6 +208,9 @@
     '#E54028',
     '#F18D05'
   ];
+
+  var channel = QueryString.channel || 'eon-builder';
+  var subscribe_key = QueryString.subscribe_key || 'demo';
 
   var builder = function(params) {
     
@@ -192,15 +229,12 @@
       console.log('refresh with ' , params)
 
       self.type = params.type || self.type || 'spline';
-      self.channel = params.channel || self.channel || 'eon-builder';
-      self.subscribe_key = params.subscribe_key || self.subscribe_key || false;
+
       self.rate = params.rate || self.rate || false;
       self.duration = params.duration || self.duration || 250;
       self.limit = params.limit || self.limit || 5;
       self.xlabel = params.xlabel || self.xlabel || false;
       self.ylabel = params.ylabel || self.ylabel || false;
-
-      console.log(self)
 
       if(typeof self.history == "undefined") {
         self.history = true;
@@ -225,7 +259,7 @@
 
       self.chart = eon.chart({
         pubnub: self.pubnub,
-        channel: self.channel,
+        channel: channel,
         history: self.history,
         flow: self.flow,
         rate: self.rate,
@@ -264,7 +298,7 @@
       });
 
       self.pedit.subscribe({
-        channel: self.channel,
+        channel: channel,
         message: function(data, a, b) {
 
           console.log(data, a ,b)
@@ -384,12 +418,12 @@
         '<div id="chart"></div>\n' + 
         '<script type="text/javascript">\n' +
         'var pubnub = PUBNUB.init({\n' +
-        '  subscribe_key: "' + self.subscribe_key + '"\n' +
+        '  subscribe_key: "' + subscribe_key + '"\n' +
         '});\n' +
         'var cols = ' + '["' + self.cols.join('","') + '"];' + '\n' +
         'chart = eon.chart({\n' +
         '  pubnub: pubnub,\n' +
-        '  channel: "' + self.channel + '",\n' +
+        '  channel: "' + channel + '",\n' +
         '  history: ' + self.history + ',\n' +
         '  flow: ' + self.flow +',\n' +
         '  rate: ' + self.rate + ',\n' +
@@ -431,30 +465,14 @@
     console.log(self.subscribe_key)
 
     self.pubnub = PUBNUB.init({
-      subscribe_key: self.subscribe_key
+      subscribe_key: subscribe_key
     });
 
     self.pedit = PUBNUB.init({
-      subscribe_key: self.subscribe_key
+      subscribe_key: subscribe_key
     });
 
     self.refresh(params);
-
-    self.unload = function() {
-
-      console.log('unloading  ')
-      
-      self.pedit.unsubscribe({
-        channel: self.channel
-      });
-
-      self.pubnub.unsubscribe({
-        channel: self.channel
-      });
-
-      $('#kvs').empty();
-
-    }
 
     return self;
 
@@ -474,28 +492,22 @@
     b = new builder(params);
   }
 
-  $('#change').click(function(){
+  $('.channel').text(channel);
+  $('.subscribe_key').text(subscribe_key);
 
-    $('#subscribe-key').text('demo')
-    $('#channel').text('eon-builder22');
-
-    reboot();
-
-    return false;
-
-  });
-
-  $('#subscribe-key').editable({
+  $('#subscribe_key').editable({
     unsavedclass: null,
     success: function(r, newValue) {
-      reboot({subscribe_key: newValue});
+      var a = updateQueryStringParameter(window.location.href, 'subscribe_key', newValue)
+      window.location = a;
     }
   });
 
   $('#channel').editable({
     unsavedclass: null,
     success: function(r, newValue){
-      reboot({channel: newValue});
+      var a = updateQueryStringParameter(window.location.href, 'channel', newValue)
+      window.location = a;
     }
   })
 
