@@ -23,19 +23,92 @@
     <div class="row">
       <div class="col-md-9">
 
-        <div class="form-group">
-          <label>Subscribe Key</label>
-          <p class="text-muted">The PubNub subscribe key.</p>
-          <input type="text" class="form-control" id="subscribe-key" value="demo">
-        </div>
+        <h2>Chart</h2>
+        <p class="text-muted">Configure your realtime chart.</p>
 
         <div class="form-group">
-          <label>Channel</label>
-          <p class="text-muted">The PubNub channel where your data is being published.</p>
-          <input type="text" class="form-control" id="channel" value="eon-builder">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="col-md-3">Attribute</th>
+                <th class="col-md-3">Value</th>
+                <th class="col-md-6">Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Subscribe Key</td>
+                <td>
+                  <a href="#" id="subscribe-key" data-type="text" data-title="Enter new subscribe key.">demo</a> 
+                </td>
+                <td>
+                  <p class="text-muted">The PubNub subscribe key.</p>
+                </td>
+              </tr>
+              <tr>
+                <td>Channel</td>
+                <td>
+                  <a href="#" id="channel" data-type="text" data-title="Enter new PubNub channel.">eon-builder</a> 
+                </td>
+                <td>
+                  <p class="text-muted">The PubNub channel where your data is being published.</p>
+                </td>
+              </tr>
+              <tr>
+                <td>Chart Type</td>
+                <td>
+                  <a href="#" id="type" data-type="select" data-title="Choose a chart type.">spline</a> 
+                </td>
+                <td>
+                  <p class="text-muted">Time series, bar, donut, your call.</p></td>
+              </tr>
+              <tr>
+                <td>X Axis Label</td>
+                <td>
+                  <a href="#" id="xlabel" data-type="text" data-title="Enter new X Axis Label"></a> 
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Y Axis Label</td>
+                <td>
+                  <a href="#" id="ylabel" data-type="text" data-title="Enter new Y Axis Label"></a> 
+                </td>
+                <td></td>
+              </tr>
+              <tr>
+                <td>Animation</td>
+                <td>
+                  <a href="#" id="duration" data-type="text" data-title="Enter new animation length (ms)">250</a> 
+                </td>
+                <td><p class="text-muted">How long each animation will last.</p></td>
+              </tr>
+              <tr>
+                <td>Limit</td>
+                <td>
+                  <a href="#" id="limit" data-type="text" data-title="Enter new limit">5</a> 
+                </td>
+                <td><p class="text-muted">How many data points to display.</p></td>
+              </tr>
+              <tr>
+                <td>Enable History</td>
+                <td>
+                  <input type="checkbox" id="history" checked>  Enable
+                </td>
+                <td><p class="text-muted">Use PubNub history to populate the chart on load</p></td>
+              </tr>
+              <tr>
+                <td>Update Rate (ms)</td>
+                <td>
+                  <a href="#" id="rate" data-type="text" data-title="Enter new update rate in milliseconds.">1000</a> 
+                </td>
+                <td><p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten. If the chart updates before new data is received, data will remain stagnant.</p></td>
+              </tr>
+            </tbody>
+          </table>
         </div>
 
-        <label>Data</label>
+        <h2>Data</h2>
         <p class="text-muted">Click on a row to start seeing it output to the chart. Note that only integer values are shown here.</p>
 
         <div class="form-group">
@@ -51,55 +124,6 @@
           <tbody id="kvs">
           </tbody>
         </table>
-        </div>
-
-        <div class="form-group">
-          <label>Chart Type</label>
-          <p class="text-muted">Time series, bar, donut, your call.</p>
-          <select class="form-control" id="chart-type">
-            <option value="spline">Spline</option>
-            <option value="area">Area</option>
-            <option value="area-spline">Area Spline</option>
-            <option value="step">Step</option>
-            <option value="area-step">Area Step</option>
-            <option value="scatter">Scatter</option>
-            <option value="bar">Bar</option>
-            <option value="donut">Donut</option>
-            <option value="pie">Pie</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label>X Axis Label</label>
-          <input type="text" class="form-control" id="xlabel" value="">
-        </div>
-
-        <div class="form-group">
-          <label>Y Axis Label</label>
-          <input type="text" class="form-control" id="ylabel" value="">
-        </div>
-
-        <div class="form-group">
-          <label>Update Rate (ms)</label>
-          <p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten. If the chart updates before new data is received, data will remain stagnant.</p>
-          <input type="text" class="form-control" id="rate" value="1000">
-        </div>
-
-        <div class="form-group">
-          <label>Animation (ms)</label>
-          <p class="text-muted">How long each animation will last.</p>
-          <input type="text" class="form-control" id="duration" value="250">
-        </div>
-
-        <div class="form-group">
-          <label>Limit</label>
-          <p class="text-muted">How many data points to display.</p>
-          <input type="text" class="form-control" id="limit" value="5">
-        </div>
-
-        <div class="form-group">
-          <input type="checkbox" id="history" checked>  <label>History</label>
-          <p class="text-muted">Use PubNub history to populate the chart on load</p>
         </div>
 
       </div>
@@ -151,21 +175,9 @@
     '#F18D05'
   ];
 
-  var input = {
-    type: function() { return $('#chart-type').val() },
-    channel: function() { return $('#channel').val() },
-    subscribe_key: function() { return $('#subscribe-key').val() },
-    rate: function() { return $('#rate').val() },
-    duration: function() { return $('#duration').val() },
-    limit: function() { return $('#limit').val() },
-    history: function() { return $('#history').is(':checked') || false },
-    xlabel: function() { return $('#xlabel').val() },
-    ylabel: function() { return $('#ylabel').val() }
-  };
-
-  var builder = function() {
+  var builder = function(params) {
     
-    console.log('builder started')
+    console.log('builder started', params)
 
     var self = this;
  
@@ -173,19 +185,30 @@
     self.labels = {};
     self.colors = {};
 
-    self.refresh = function() {
+    self.refresh = function(params) {
 
-      console.log(self.colors)
+      var params = params || {};
 
-      self.type = input.type();
-      self.channel = input.channel();
-      self.subscribe_key = input.subscribe_key();
-      self.rate = input.rate();
-      self.duration = input.duration();
-      self.limit = input.limit();
-      self.history = input.history();
-      self.xlabel = input.xlabel();
-      self.ylabel = input.ylabel();
+      console.log('refresh with ' , params)
+
+      self.type = params.type || self.type || 'spline';
+      self.channel = params.channel || self.channel || 'eon-builder';
+      self.subscribe_key = params.subscribe_key || self.subscribe_key || false;
+      self.rate = params.rate || self.rate || false;
+      self.duration = params.duration || self.duration || 250;
+      self.limit = params.limit || self.limit || 5;
+      self.xlabel = params.xlabel || self.xlabel || false;
+      self.ylabel = params.ylabel || self.ylabel || false;
+
+      console.log(self)
+
+      if(typeof self.history == "undefined") {
+        self.history = true;
+      }
+
+      if(typeof params.history !== "undefined") {
+        self.history = params.history;
+      }
 
       self.flow = false;
 
@@ -242,7 +265,9 @@
 
       self.pedit.subscribe({
         channel: self.channel,
-        message: function(data) {
+        message: function(data, a, b) {
+
+          console.log(data, a ,b)
 
           var data = eon.c.flatten(data);
 
@@ -268,7 +293,7 @@
                     <td class="key"><a href="#" id="key-edit" data-type="text" data-title="Enter new key.">' + key + '</a></td> \
                     <td class="val">' + value + '</td> \
                     <td> \
-                      <div class="input-group colorpick" data-key="' + key + '"> \
+                      <dciv class="input-group colorpick" data-key="' + key + '"> \
                           <input type="text" value="' + color + '" class="form-control" /> \
                           <span class="input-group-addon"><i></i></span> \
                       </div> \
@@ -288,11 +313,8 @@
                 });
 
                 $row.find('#key-edit').editable({
-                    send: 'never',
                     unsavedclass: null,
                     success: function(response, newValue) {
-                      
-                      $(this).removeClass('editable-unsaved');
                       
                       var thisKey = $(this).closest('tr').attr('data-key');
                       
@@ -303,7 +325,7 @@
                       delete self.colors[thisKey];
 
                       self.refresh();
-                      
+
                     }
                 });
 
@@ -350,31 +372,9 @@
         }
       });
 
-    }
-
-    self.unload = function() {
-      
-      self.pedit.unsubscribe({
-        channel: self.channel
-      });
-
-      self.pubnub.unsubscribe({
-        channel: self.channel
-      });
-
-      $('#kvs').empty();
+      self.embed();
 
     }
-      
-    self.pubnub = PUBNUB.init({
-      subscribe_key: self.subscribe_key
-    });
-
-    self.pedit = PUBNUB.init({
-      subscribe_key: self.subscribe_key
-    });
-
-    self.refresh();
 
     self.embed = function() {
 
@@ -428,6 +428,34 @@
 
     };
 
+    console.log(self.subscribe_key)
+
+    self.pubnub = PUBNUB.init({
+      subscribe_key: self.subscribe_key
+    });
+
+    self.pedit = PUBNUB.init({
+      subscribe_key: self.subscribe_key
+    });
+
+    self.refresh(params);
+
+    self.unload = function() {
+
+      console.log('unloading  ')
+      
+      self.pedit.unsubscribe({
+        channel: self.channel
+      });
+
+      self.pubnub.unsubscribe({
+        channel: self.channel
+      });
+
+      $('#kvs').empty();
+
+    }
+
     return self;
 
   };
@@ -435,39 +463,102 @@
   // sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe
   // pubnub-sensor-network
 
-  var b = new builder();
+  /*
+  chart is not unsubscribing when destoryed, values still show up
+  */
+  var b;
 
-  var init = function() {
-  
-    // restart if they change subscribe or channel
-    if(input.subscribe_key() !== b.subscribe_key ||
-       input.channel() !== b.channel) {
-      b.unload();
-      delete b;
-      b = new builder();
-    } else {
-      b.refresh();
-    }    
+  var reboot = function(params) {
+    b.unload();    
+    delete b;
+    b = new builder(params);
   }
-
-  $('#submit').click(function(e) {
-    init();
-    return false;
-  });
 
   $('#change').click(function(){
 
-    $('#subscribe-key').val('demo')
-    $('#channel').val('eon-builder22');
+    $('#subscribe-key').text('demo')
+    $('#channel').text('eon-builder22');
 
-    init();
+    reboot();
 
     return false;
+
   });
 
-  $('#chart-type').change(function(e) {
-    b.refresh();
+  $('#subscribe-key').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      reboot({subscribe_key: newValue});
+    }
   });
+
+  $('#channel').editable({
+    unsavedclass: null,
+    success: function(r, newValue){
+      reboot({channel: newValue});
+    }
+  })
+
+  $('#rate').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({rate: newValue});
+    }
+  });
+
+  $('#duration').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({duration: newValue});
+    }
+  });
+  
+  $('#limit').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({limit: newValue});
+    }
+  });
+  
+  $('#history').click(function(){
+    b.refresh({history: $(this).is(':checked') });
+  });
+  
+  $('#xlabel').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({xlabel: newValue});
+    }
+  });
+  
+  $('#ylabel').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({
+        ylabel: newValue
+      });
+    }
+  });
+
+  $('#type').editable({
+    value: 'spline',    
+    source: [
+      {value: 'spline', text:'Spline'},
+      {value: 'area', text:'Area'},
+      {value: 'area-spline', text:'Area Spline'},
+      {value: 'step', text:'Step'},
+      {value: 'area-step', text:'Area Step'},
+      {value: 'scatter', text:'Scatter'},
+      {value: 'bar', text:'Bar'},
+      {value: 'donut', text:'Donut'},
+      {value: 'pie', text:'Pie'}
+    ],
+    success: function(response, newValue) {
+      b.refresh({type: newValue});
+    }
+  });
+
+  b = new builder();
 
   var pubnub3 = PUBNUB.init({
     subscribe_key: 'demo'
