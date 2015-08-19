@@ -229,12 +229,11 @@
       console.log('refresh with ' , params)
 
       self.type = params.type || self.type || 'spline';
-
-      self.rate = params.rate || self.rate || false;
+      self.rate = params.rate || self.rate || 1000;
       self.duration = params.duration || self.duration || 250;
       self.limit = params.limit || self.limit || 5;
-      self.xlabel = params.xlabel || self.xlabel || false;
-      self.ylabel = params.ylabel || self.ylabel || false;
+      self.xlabel = params.xlabel || self.xlabel || '';
+      self.ylabel = params.ylabel || self.ylabel || '';
 
       if(typeof self.history == "undefined") {
         self.history = true;
@@ -325,8 +324,8 @@
                 var $row = $('\
                   <tr data-key="' + key + '"> \
                     <td class="key"><a href="#" id="key-edit" data-type="text" data-title="Enter new key.">' + key + '</a></td> \
-                    <td class="val">' + value + '</td> \
-                    <td> \
+                    <td class="val col-md-4">' + value + '</td> \
+                    <td class="col-md-4"> \
                       <dciv class="input-group colorpick" data-key="' + key + '"> \
                           <input type="text" value="' + color + '" class="form-control" /> \
                           <span class="input-group-addon"><i></i></span> \
@@ -343,6 +342,7 @@
                 picker.on('changeColor.colorpicker', function(event){
                   
                   self.colors[$(this).closest('tr').attr('data-key')] = event.color.toHex();
+                  self.embed();
 
                 });
 
@@ -354,7 +354,7 @@
                       
                       self.labels[thisKey] = newValue;
 
-                      // colors map to displayed keys in c3
+                      // colors map to labels in c3
                       self.colors[newValue] = self.colors[thisKey];
                       delete self.colors[thisKey];
 
