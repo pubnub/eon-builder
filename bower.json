@@ -16,6 +16,7 @@
     "jquery": "~2.1.4",
     "bootstrap": "~3.3.5",
     "mjolnic-bootstrap-colorpicker": "~2.3.0",
-    "bootstrap-toggle": "~2.2.1"
+    "bootstrap-toggle": "~2.2.1",
+    "x-editable": "~1.5.1"
   }
 }

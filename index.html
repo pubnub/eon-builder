@@ -42,7 +42,7 @@
         <table class="table table-bordered table-striped">
           <thead>
             <tr>
-              <th>Key</th>
+              <th>Label</th>
               <th>Value</th>
               <th>Color</th>
               <th>Graph</th>
@@ -130,6 +130,9 @@
   <link href="./bower_components/bootstrap-toggle/css/bootstrap-toggle.min.css" rel="stylesheet">
   <script src="./bower_components/bootstrap-toggle/js/bootstrap-toggle.min.js"></script>
 
+  <script src="./bower_components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.min.js"></script>
+  <link href="./bower_components/x-editable/dist/bootstrap3-editable/css/bootstrap-editable.css" rel="stylesheet">
+
   <script type="text/javascript">
 
   function isNumber(n) {
@@ -167,10 +170,12 @@
     var self = this;
  
     self.cols = [];
-
+    self.labels = {};
     self.colors = {};
 
     self.refresh = function() {
+
+      console.log(self.colors)
 
       self.type = input.type();
       self.channel = input.channel();
@@ -194,9 +199,6 @@
         self.flow = true;
 
       }
-
-      console.log('refreshed')
-      console.log(self);
 
       self.chart = eon.chart({
         pubnub: self.pubnub,
@@ -225,15 +227,11 @@
         },
         transform: function(message) {
 
-          console.log(self.cols);
-
           var message = eon.c.flatten(message);
 
           var array = self.cols.map(function(arg){
-            return [arg, message[arg]];
+            return [self.labels[arg] || arg, message[arg]];
           });
-
-          console.log(array);
 
           return {
             columns: array
@@ -267,7 +265,7 @@
 
                 var $row = $('\
                   <tr data-key="' + key + '"> \
-                    <td class="key">' + key + '</td> \
+                    <td class="key"><a href="#" id="key-edit" data-type="text" data-title="Enter new key.">' + key + '</a></td> \
                     <td class="val">' + value + '</td> \
                     <td> \
                       <div class="input-group colorpick" data-key="' + key + '"> \
@@ -287,6 +285,26 @@
                   
                   self.colors[$(this).closest('tr').attr('data-key')] = event.color.toHex();
 
+                });
+
+                $row.find('#key-edit').editable({
+                    send: 'never',
+                    unsavedclass: null,
+                    success: function(response, newValue) {
+                      
+                      $(this).removeClass('editable-unsaved');
+                      
+                      var thisKey = $(this).closest('tr').attr('data-key');
+                      
+                      self.labels[thisKey] = newValue;
+
+                      // colors map to displayed keys in c3
+                      self.colors[newValue] = self.colors[thisKey];
+                      delete self.colors[thisKey];
+
+                      self.refresh();
+                      
+                    }
                 });
 
                 $row.find('.toggle').bootstrapToggle('on');
