@@ -5,22 +5,23 @@
 var pubnub = PUBNUB.init({
   subscribe_key: "demo"
 });
-var cols = ["something","something_else.another_thing.value","a","b","c"];
+var cols = ["something","something_else.another_thing.value","a","b","c"]; 
+var labels = {}; 
 chart = eon.chart({
   pubnub: pubnub,
   channel: "eon-builder",
   history: true,
-  flow: true,
+  flow: false,
   rate: 1000,
   limit: 5,
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"something":"#cb0025","something_else.another_thing.value":"#ae2424","a":"#d10202","b":"#742c2c","c":"#D70060"},
-      type: "spline"
+      colors: {"something":"#00A1CB","something_else.another_thing.value":"#00ff75","a":"#D0D102","b":"#32742C","c":"#D70060"},
+      type: "bar"
     },
     transition: {
-      duration: 250
+      duration: 10
     },
     axis: {
       x: {
@@ -34,7 +35,7 @@ chart = eon.chart({
   transform: function(message) {
     var message = eon.c.flatten(message);
     var array = cols.map(function(arg){
-      return [arg, message[arg]];
+      return [labels[arg] || arg, message[arg]];
     });
     return {
       columns: array

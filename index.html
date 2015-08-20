@@ -420,7 +420,8 @@
         'var pubnub = PUBNUB.init({\n' +
         '  subscribe_key: "' + subscribe_key + '"\n' +
         '});\n' +
-        'var cols = ' + '["' + self.cols.join('","') + '"];' + '\n' +
+        'var cols = ' + JSON.stringify(self.cols) + '; \n' +
+        'var labels = ' + JSON.stringify(self.labels) + '; \n' + 
         'chart = eon.chart({\n' +
         '  pubnub: pubnub,\n' +
         '  channel: "' + channel + '",\n' +
@@ -449,7 +450,7 @@
         '  transform: function(message) {\n' +
         '    var message = eon.c.flatten(message);\n' + 
         '    var array = cols.map(function(arg){\n' +
-        '      return [arg, message[arg]];\n' +
+        '      return [labels[arg] || arg, message[arg]];\n' +
         '    });\n' +
         '    return {\n' + 
         '      columns: array\n' +
