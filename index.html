@@ -54,10 +54,37 @@
                   <p class="text-muted">The PubNub channel where your data is being published.</p>
                 </td>
               </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>PubNub</h2>
+        <p class="text-muted">Configure your pubnub credentials.</p>
+
+        <div class="form-group">
+          <table class="table table-bordered table-striped">
+            <thead>
+              <tr>
+                <th class="col-md-3">Attribute</th>
+                <th class="col-md-3">Value</th>
+                <th class="col-md-6">Description</th>
+              </tr>
+            </thead>
+            <tbody>
               <tr>
                 <td>Chart Type</td>
-                <td>
-                  <a href="#" id="type" data-type="select" data-title="Choose a chart type.">spline</a> 
+                <td> 
+                  <select id="type" class="form-control">
+                    <option value="spline">Spline</option>
+                    <option value="area">Area</option>
+                    <option value="area-spline">Area Spline</option>
+                    <option value="step">Step</option>
+                    <option value="area-step">Area Step</option>
+                    <option value="scatter">Scatter</option>
+                    <option value="bar">Bar</option>
+                    <option value="donut">Donut</option>
+                    <option value="pie">Pie</option>
+                  </select>
                 </td>
                 <td>
                   <p class="text-muted">Time series, bar, donut, your call.</p></td>
@@ -553,22 +580,8 @@
     }
   });
 
-  $('#type').editable({
-    value: 'spline',    
-    source: [
-      {value: 'spline', text:'Spline'},
-      {value: 'area', text:'Area'},
-      {value: 'area-spline', text:'Area Spline'},
-      {value: 'step', text:'Step'},
-      {value: 'area-step', text:'Area Step'},
-      {value: 'scatter', text:'Scatter'},
-      {value: 'bar', text:'Bar'},
-      {value: 'donut', text:'Donut'},
-      {value: 'pie', text:'Pie'}
-    ],
-    success: function(response, newValue) {
-      b.refresh({type: newValue});
-    }
+  $('#type').change(function(){
+    b.refresh({type: $(this).val()});
   });
 
   b = new builder();
