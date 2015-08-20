@@ -54,6 +54,13 @@
                   <p class="text-muted">The PubNub channel where your data is being published.</p>
                 </td>
               </tr>
+              <tr>
+                <td>Enable History</td>
+                <td>
+                  <input type="checkbox" id="history" checked>
+                </td>
+                <td><p class="text-muted">Use PubNub history to populate the chart on load</p></td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -104,13 +111,20 @@
                 <td></td>
               </tr>
               <tr>
+                <td>Update Rate (ms)</td>
+                <td>
+                  <a href="#" id="rate" data-type="text" data-title="Enter new update rate in milliseconds.">1000</a> 
+                </td>
+                <td><p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten.</p></td>
+              </tr>
+              <tr>
                 <td>Animation</td>
                 <td>
                   <a href="#" id="duration" data-type="text" data-title="Enter new animation length (ms)">250</a> 
                 </td>
                 <td><p class="text-muted">How long each animation will last.</p></td>
               </tr>
-              <tr>
+              <tr id="limit-row">
                 <td>Limit</td>
                 <td>
                   <a href="#" id="limit" data-type="text" data-title="Enter new limit">5</a> 
@@ -118,18 +132,18 @@
                 <td><p class="text-muted">How many data points to display.</p></td>
               </tr>
               <tr>
-                <td>Enable History</td>
+                <td>X Grid</td>
                 <td>
-                  <input type="checkbox" id="history" checked>  Enable
+                  <input type="checkbox" id="xgrid">
                 </td>
-                <td><p class="text-muted">Use PubNub history to populate the chart on load</p></td>
+                <td><p class="text-muted">Show gridlines along x axis.</p></td>
               </tr>
               <tr>
-                <td>Update Rate (ms)</td>
+                <td>Y Grid</td>
                 <td>
-                  <a href="#" id="rate" data-type="text" data-title="Enter new update rate in milliseconds.">1000</a> 
+                  <input type="checkbox" id="ygrid">
                 </td>
-                <td><p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten. If the chart updates before new data is received, data will remain stagnant.</p></td>
+                <td><p class="text-muted">Show gridlines along y axis.</p></td>
               </tr>
             </tbody>
           </table>
@@ -156,9 +170,6 @@
       </div>
       <div class="col-md-3">
         <div id="chart-wrapper">
-         
-          <button type="submit" class="btn btn-default" id="submit">Update</button>
-          <button type="submit" class="btn btn-default" id="change">Swap</button>
           
           <div id="chart"></div>
           <textarea id="embed" class="form-control" style="height: 500px"></textarea>
@@ -240,8 +251,6 @@
   var subscribe_key = QueryString.subscribe_key || 'demo';
 
   var builder = function(params) {
-    
-    console.log('builder started', params)
 
     var self = this;
  
@@ -253,8 +262,6 @@
 
       var params = params || {};
 
-      console.log('refresh with ' , params)
-
       self.type = params.type || self.type || 'spline';
       self.rate = params.rate || self.rate || 1000;
       self.duration = params.duration || self.duration || 250;
@@ -262,12 +269,33 @@
       self.xlabel = params.xlabel || self.xlabel || '';
       self.ylabel = params.ylabel || self.ylabel || '';
 
+      // error checking
+      if(self.rate < self.duration) {
+        alert('Update rate always needs to be less than animation duration. Your chart will experience bugs until you update this.');
+      }
+
       if(typeof self.history == "undefined") {
         self.history = true;
       }
 
       if(typeof params.history !== "undefined") {
         self.history = params.history;
+      }
+
+      if(typeof self.xgrid == "undefined") {
+        self.xgrid = false;
+      }
+
+      if(typeof params.xgrid !== "undefined") {
+        self.xgrid = params.xgrid;
+      }
+
+      if(typeof self.ygrid == "undefined") {
+        self.ygrid = false;
+      }
+
+      if(typeof params.ygrid !== "undefined") {
+        self.ygrid = params.ygrid;
       }
 
       self.flow = false;
@@ -280,7 +308,10 @@
         self.type == "scatter") {
 
         self.flow = true;
+        $('#limit-row').show();
 
+      } else {
+        $('#limit-row').hide();
       }
 
       self.chart = eon.chart({
@@ -293,6 +324,7 @@
         generate: {
           bindto: '#chart',
           data: {
+            x: self.x,
             type: self.type,
             colors: self.colors
           },
@@ -301,10 +333,18 @@
           },
           axis: {
             x: {
-              label: self.xlabel
+              label: self.xlabel,
             },
             y: {
               label: self.ylabel
+            }
+          },
+          grid: {
+            x: {
+              show: self.xgrid
+            },
+            y: {
+              show: self.ygrid
             }
           }
         },
@@ -316,6 +356,8 @@
             return [self.labels[arg] || arg, message[arg]];
           });
 
+          console.log(array)
+
           return {
             columns: array
           };
@@ -326,8 +368,6 @@
       self.pedit.subscribe({
         channel: channel,
         message: function(data, a, b) {
-
-          console.log(data, a ,b)
 
           var data = eon.c.flatten(data);
 
@@ -419,7 +459,7 @@
                      
                   }
 
-                })
+                });
 
                 $('#kvs').append($row);
                 self.embed();
@@ -472,6 +512,14 @@
         '      y: {\n' +
         '        label: "' + self.ylabel + '"\n' +
         '      }\n' +
+        '    },\n' +
+        '    grid: {\n' +
+        '      x: {\n' +
+        '        show: ' + self.xgrid + ' \n' +
+        '      },\n' +
+        '      y: {\n' +
+        '        show: ' + self.ygrid + ' \n' +
+        '      }\n' +
         '    }\n' +
         '  },\n' +
         '  transform: function(message) {\n' +
@@ -490,8 +538,6 @@
 
     };
 
-    console.log(self.subscribe_key)
-
     self.pubnub = PUBNUB.init({
       subscribe_key: subscribe_key
     });
@@ -509,9 +555,6 @@
   // sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe
   // pubnub-sensor-network
 
-  /*
-  chart is not unsubscribing when destoryed, values still show up
-  */
   var b;
 
   var reboot = function(params) {
@@ -560,10 +603,6 @@
     }
   });
   
-  $('#history').click(function(){
-    b.refresh({history: $(this).is(':checked') });
-  });
-  
   $('#xlabel').editable({
     unsavedclass: null,
     success: function(r, newValue) {
@@ -574,14 +613,27 @@
   $('#ylabel').editable({
     unsavedclass: null,
     success: function(r, newValue) {
-      b.refresh({
-        ylabel: newValue
-      });
+      b.refresh({ylabel: newValue});
     }
   });
 
   $('#type').change(function(){
     b.refresh({type: $(this).val()});
+  });
+
+  $('#history').bootstrapToggle('on');
+  $('#history').change(function() {
+    b.refresh({history: $(this).prop('checked') });
+  });
+
+  $('#xgrid').bootstrapToggle('off');
+  $('#xgrid').change(function() {
+    b.refresh({xgrid: $(this).prop('checked') });
+  });
+
+  $('#ygrid').bootstrapToggle('off');
+  $('#ygrid').change(function() {
+    b.refresh({ygrid: $(this).prop('checked') });
   });
 
   b = new builder();

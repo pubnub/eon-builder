@@ -3,25 +3,25 @@
 <div id="chart"></div>
 <script type="text/javascript">
 var pubnub = PUBNUB.init({
-  subscribe_key: "demo"
+  subscribe_key: "sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe"
 });
-var cols = ["something","something_else.another_thing.value","a","b","c"]; 
+var cols = ["timestamp","radiation_level","ambient_temperature","humidity","photosensor"]; 
 var labels = {}; 
 chart = eon.chart({
   pubnub: pubnub,
-  channel: "eon-builder",
+  channel: "pubnub-sensor-network",
   history: true,
-  flow: false,
+  flow: true,
   rate: 1000,
   limit: 5,
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"something":"#00A1CB","something_else.another_thing.value":"#00ff75","a":"#D0D102","b":"#32742C","c":"#D70060"},
-      type: "bar"
+      colors: {"timestamp":"#32742C","radiation_level":"#D70060","ambient_temperature":"#E54028","humidity":"#F18D05","photosensor":"#113F8C"},
+      type: "spline"
     },
     transition: {
-      duration: 10
+      duration: 250
     },
     axis: {
       x: {
@@ -29,6 +29,14 @@ chart = eon.chart({
       },
       y: {
         label: ""
+      }
+    },
+    grid: {
+      x: {
+        show: true 
+      },
+      y: {
+        show: true 
       }
     }
   },
