@@ -309,13 +309,13 @@
         '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
         '<div id="chart"></div>\n' + 
         '<script type="text/javascript">\n' +
-        'var pubnub = PUBNUB.init({\n' +
+        'var __eon_pubnub = PUBNUB.init({\n' +
         '  subscribe_key: "' + subscribe_key + '"\n' +
         '});\n' +
-        'var cols = ' + JSON.stringify(self.cols) + '; \n' +
-        'var labels = ' + JSON.stringify(self.labels) + '; \n' + 
+        'var __eon_cols = ' + JSON.stringify(self.cols) + '; \n' +
+        'var __eon_labels = ' + JSON.stringify(self.labels) + '; \n' + 
         'chart = eon.chart({\n' +
-        '  pubnub: pubnub,\n' +
+        '  pubnub: __eon_pubnub,\n' +
         '  channel: "' + channel + '",\n' +
         '  history: ' + self.history + ',\n' +
         '  flow: ' + self.flow +',\n' +
@@ -355,8 +355,8 @@
         '  },\n' +
         '  transform: function(message) {\n' +
         '    var message = eon.c.flatten(message);\n' + 
-        '    var array = cols.map(function(arg){\n' +
-        '      return [labels[arg] || arg, message[arg]];\n' +
+        '    var array = __eon_cols.map(function(arg){\n' +
+        '      return [__eon_labels[arg] || arg, message[arg]];\n' +
         '    });\n' +
         '    return {\n' + 
         '      columns: array\n' +

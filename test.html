@@ -2,14 +2,14 @@
 <link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
 <div id="chart"></div>
 <script type="text/javascript">
-var pubnub = PUBNUB.init({
-  subscribe_key: "sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe"
+var __eon_pubnub = PUBNUB.init({
+  subscribe_key: "demo"
 });
-var cols = ["timestamp","radiation_level","ambient_temperature","humidity","photosensor"]; 
-var labels = {}; 
+var __eon_cols = ["something","something_else.another_thing.value","a","b","c"]; 
+var __eon_labels = {}; 
 chart = eon.chart({
-  pubnub: pubnub,
-  channel: "pubnub-sensor-network",
+  pubnub: __eon_pubnub,
+  channel: "eon-builder",
   history: true,
   flow: true,
   rate: 1000,
@@ -17,7 +17,7 @@ chart = eon.chart({
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"timestamp":"#E54028","radiation_level":"#F18D05","ambient_temperature":"#113F8C","humidity":"#01A4A4","photosensor":"#00A1CB"},
+      colors: {"something":"#E54028","something_else.another_thing.value":"#F18D05","a":"#113F8C","b":"#01A4A4","c":"#00A1CB"},
       type: "spline"
     },
     transition: {
@@ -40,16 +40,16 @@ chart = eon.chart({
       }
     },
     tooltip: {
-     show: false
+     show: true
     },
     point: {
-      show: false
+      show: true
     }
   },
   transform: function(message) {
     var message = eon.c.flatten(message);
-    var array = cols.map(function(arg){
-      return [labels[arg] || arg, message[arg]];
+    var array = __eon_cols.map(function(arg){
+      return [__eon_labels[arg] || arg, message[arg]];
     });
     return {
       columns: array
