@@ -305,7 +305,7 @@
     self.embed = function() {
 
       var embedsrc = '' +
-        '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"><\/script>\n' +
+        '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon-chart.js"><\/script>\n' +
         '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
         '<div id="chart"></div>\n' + 
         '<script type="text/javascript">\n' +
