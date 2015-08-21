@@ -17,7 +17,7 @@ chart = eon.chart({
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"timestamp":"#32742C","radiation_level":"#D70060","ambient_temperature":"#E54028","humidity":"#F18D05","photosensor":"#113F8C"},
+      colors: {"timestamp":"#E54028","radiation_level":"#F18D05","ambient_temperature":"#113F8C","humidity":"#01A4A4","photosensor":"#00A1CB"},
       type: "spline"
     },
     transition: {
@@ -33,11 +33,17 @@ chart = eon.chart({
     },
     grid: {
       x: {
-        show: true 
+        show: false 
       },
       y: {
-        show: true 
+        show: false 
       }
+    },
+    tooltip: {
+     show: false
+    },
+    point: {
+      show: false
     }
   },
   transform: function(message) {

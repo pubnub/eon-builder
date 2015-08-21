@@ -1,0 +1,530 @@
+
+  function updateQueryStringParameter(uri, key, value) {
+    var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+    var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+    if (uri.match(re)) {
+      return uri.replace(re, '$1' + key + "=" + value + '$2');
+    }
+    else {
+      return uri + separator + key + "=" + value;
+    }
+  }
+  
+  var QueryString = function () {
+    // This function is anonymous, is executed immediately and 
+    // the return value is assigned to QueryString!
+    var query_string = {};
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+      var pair = vars[i].split("=");
+          // If first entry with this name
+      if (typeof query_string[pair[0]] === "undefined") {
+        query_string[pair[0]] = decodeURIComponent(pair[1]);
+          // If second entry with this name
+      } else if (typeof query_string[pair[0]] === "string") {
+        var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+        query_string[pair[0]] = arr;
+          // If third or later entry with this name
+      } else {
+        query_string[pair[0]].push(decodeURIComponent(pair[1]));
+      }
+    } 
+      return query_string;
+  }();
+
+  function isNumber(n) {
+    return !isNaN(parseFloat(n)) && isFinite(n);
+  }
+
+  var defaultColors = [
+    '#113F8C',
+    '#01A4A4',
+    '#00A1CB',
+    '#61AE24',
+    '#D0D102',
+    '#32742C',
+    '#D70060',
+    '#E54028',
+    '#F18D05'
+  ];
+
+  var channel = QueryString.channel || 'eon-builder';
+  var subscribe_key = QueryString.subscribe_key || 'demo';
+
+  var builder = function(params) {
+
+    var self = this;
+ 
+    self.cols = [];
+    self.labels = {};
+    self.colors = {};
+
+    self.refresh = function(params) {
+
+      var params = params || {};
+
+      self.type = params.type || self.type || 'spline';
+      self.rate = params.rate || self.rate || 1000;
+      self.duration = params.duration || self.duration || 250;
+      self.limit = params.limit || self.limit || 5;
+      self.xlabel = params.xlabel || self.xlabel || '';
+      self.ylabel = params.ylabel || self.ylabel || '';
+
+      // error checking
+      if(self.rate < self.duration) {
+        alert('Update rate always needs to be less than animation duration. Your chart will experience bugs until you update this.');
+      }
+
+      if(typeof self.history == "undefined") {
+        self.history = true;
+      }
+
+      if(typeof params.history !== "undefined") {
+        self.history = params.history;
+      }
+
+      if(typeof self.xgrid == "undefined") {
+        self.xgrid = false;
+      }
+
+      if(typeof params.xgrid !== "undefined") {
+        self.xgrid = params.xgrid;
+      }
+
+      if(typeof self.ygrid == "undefined") {
+        self.ygrid = false;
+      }
+
+      if(typeof params.ygrid !== "undefined") {
+        self.ygrid = params.ygrid;
+      }
+
+      if(typeof self.points == "undefined") {
+        self.points = true;
+      }
+
+      if(typeof params.points !== "undefined") {
+        self.points = params.points;
+      }
+
+      if(typeof self.tooltips == "undefined") {
+        self.tooltips = true;
+      }
+
+      if(typeof params.tooltips !== "undefined") {
+        self.tooltips = params.tooltips;
+      }
+
+      self.flow = false;
+
+      if(self.type == "spline" ||
+        self.type == "area" ||
+        self.type == "area-spline" ||
+        self.type == "step" ||
+        self.type == "area-step" ||
+        self.type == "scatter") {
+
+        self.flow = true;
+
+        $('#limit-row, #points-row, #xgrid-row, #ygrid-row').show();
+
+      } else {
+        $('#limit-row, #points-row, #xgrid-row, #ygrid-row').hide();
+      }
+
+      self.chart = eon.chart({
+        pubnub: self.pubnub,
+        channel: channel,
+        history: self.history,
+        flow: self.flow,
+        rate: self.rate,
+        limit: self.limit,
+        generate: {
+          bindto: '#chart',
+          data: {
+            x: self.x,
+            type: self.type,
+            colors: self.colors
+          },
+          transition: {
+            duration: self.duration
+          },
+          axis: {
+            x: {
+              label: self.xlabel,
+            },
+            y: {
+              label: self.ylabel
+            }
+          },
+          grid: {
+            x: {
+              show: self.xgrid
+            },
+            y: {
+              show: self.ygrid
+            }
+          },
+          tooltip: {
+            show: self.tooltips
+          },
+          point: {
+            show: self.points
+          }
+        },
+        transform: function(message) {
+
+          var message = eon.c.flatten(message);
+
+          var array = self.cols.map(function(arg){
+            return [self.labels[arg] || arg, message[arg]];
+          });
+
+          console.log(array)
+
+          return {
+            columns: array
+          };
+
+        }
+      });
+
+      self.pedit.subscribe({
+        channel: channel,
+        message: function(data, a, b) {
+
+          var data = eon.c.flatten(data);
+
+          for(var key in data) {
+
+            var $row = $('[data-key="' + key + '"]');
+            var value = data[key];
+
+            if(!isNaN(value)) {
+
+              if($row.length) {
+
+                $row.find('.val').text(value)
+
+              } else {
+
+                self.cols.push(key);
+
+                var color = defaultColors[$('tr').length % defaultColors.length];
+
+                var $row = $('\
+                  <tr data-key="' + key + '"> \
+                    <td class="key"><a href="#" id="key-edit" data-type="text" data-title="Enter new key.">' + key + '</a></td> \
+                    <td class="val col-md-4">' + value + '</td> \
+                    <td class="col-md-4"> \
+                      <dciv class="input-group colorpick" data-key="' + key + '"> \
+                          <input type="text" value="' + color + '" class="form-control" /> \
+                          <span class="input-group-addon"><i></i></span> \
+                      </div> \
+                    </td> \
+                    <td> \
+                    <input type="checkbox" class="toggle" checked data-toggle="toggle"> \
+                    </td> \
+                  </tr>');
+
+                var picker = $row.find('.colorpick').colorpicker();
+
+                self.colors[key] = color;
+                picker.on('changeColor.colorpicker', function(event){
+                  
+                  self.colors[$(this).closest('tr').attr('data-key')] = event.color.toHex();
+                  self.embed();
+
+                });
+
+                $row.find('#key-edit').editable({
+                    unsavedclass: null,
+                    success: function(response, newValue) {
+                      
+                      var thisKey = $(this).closest('tr').attr('data-key');
+                      
+                      self.labels[thisKey] = newValue;
+
+                      // colors map to labels in c3
+                      self.colors[newValue] = self.colors[thisKey];
+                      delete self.colors[thisKey];
+
+                      self.refresh();
+
+                    }
+                });
+
+                $row.find('.toggle').bootstrapToggle('on');
+
+                $row.find('.toggle').change(function() {
+                  
+                  var thisKey = $(this).closest('tr').attr('data-key');
+                  var isChecked = $(this).prop('checked');
+
+                  if(typeof (isChecked) !== "undefined") {
+
+                    if(isChecked){
+
+                      self.cols.push(thisKey);
+                      self.embed();
+
+                    } else {
+
+                      for(var i in self.cols) {
+
+                        if(self.cols[i] == thisKey) {
+                          self.cols.splice(i, 1);
+                          self.refresh();
+                        }
+
+                      }
+                       
+                    }
+                     
+                  }
+
+                });
+
+                $('#kvs').append($row);
+                self.embed();
+
+              }
+
+            }
+
+          }
+
+        }
+      });
+
+      self.embed();
+
+    }
+
+    self.embed = function() {
+
+      var embedsrc = '' +
+        '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon.js"><\/script>\n' +
+        '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
+        '<div id="chart"></div>\n' + 
+        '<script type="text/javascript">\n' +
+        'var pubnub = PUBNUB.init({\n' +
+        '  subscribe_key: "' + subscribe_key + '"\n' +
+        '});\n' +
+        'var cols = ' + JSON.stringify(self.cols) + '; \n' +
+        'var labels = ' + JSON.stringify(self.labels) + '; \n' + 
+        'chart = eon.chart({\n' +
+        '  pubnub: pubnub,\n' +
+        '  channel: "' + channel + '",\n' +
+        '  history: ' + self.history + ',\n' +
+        '  flow: ' + self.flow +',\n' +
+        '  rate: ' + self.rate + ',\n' +
+        '  limit: ' + self.limit + ',\n' +
+        '  generate: {\n' +
+        '    bindto: "#chart",\n' +
+        '    data: {\n' +
+        '      colors: ' + JSON.stringify(self.colors) + ',\n' + 
+        '      type: "' + self.type + '"\n' +
+        '    },\n' +
+        '    transition: {\n' +
+        '      duration: ' + self.duration + '\n' +
+        '    },\n' +
+        '    axis: {\n' +
+        '      x: {\n' +
+        '        label: "' + self.xlabel + '"\n' +
+        '      },\n' +
+        '      y: {\n' +
+        '        label: "' + self.ylabel + '"\n' +
+        '      }\n' +
+        '    },\n' +
+        '    grid: {\n' +
+        '      x: {\n' +
+        '        show: ' + self.xgrid + ' \n' +
+        '      },\n' +
+        '      y: {\n' +
+        '        show: ' + self.ygrid + ' \n' +
+        '      }\n' +
+        '    },\n' +
+        '    tooltip: {\n' +
+        '     show: ' + self.tooltips + '\n' +
+        '    },\n' +
+        '    point: {\n' +
+        '      show: ' + self.points + '\n' +
+        '    }\n' +
+        '  },\n' +
+        '  transform: function(message) {\n' +
+        '    var message = eon.c.flatten(message);\n' + 
+        '    var array = cols.map(function(arg){\n' +
+        '      return [labels[arg] || arg, message[arg]];\n' +
+        '    });\n' +
+        '    return {\n' + 
+        '      columns: array\n' +
+        '    };\n' +
+        '  }\n' + 
+        '});\n' +
+        '<\/script>';
+
+      $('#embed').val(embedsrc)
+
+    };
+
+    self.pubnub = PUBNUB.init({
+      subscribe_key: subscribe_key
+    });
+
+    self.pedit = PUBNUB.init({
+      subscribe_key: subscribe_key
+    });
+
+    self.refresh(params);
+
+    return self;
+
+  };
+
+  // sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe
+  // pubnub-sensor-network
+
+  var b;
+
+  var reboot = function(params) {
+    b.unload();    
+    delete b;
+    b = new builder(params);
+  }
+
+  $('.channel').text(channel);
+  $('.subscribe_key').text(subscribe_key);
+
+  $('#subscribe_key').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      var a = updateQueryStringParameter(window.location.href, 'subscribe_key', newValue)
+      window.location = a;
+    }
+  });
+
+  $('#channel').editable({
+    unsavedclass: null,
+    success: function(r, newValue){
+      var a = updateQueryStringParameter(window.location.href, 'channel', newValue)
+      window.location = a;
+    }
+  })
+
+  $('#rate').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({rate: newValue});
+    }
+  });
+
+  $('#duration').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({duration: newValue});
+    }
+  });
+  
+  $('#limit').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({limit: newValue});
+    }
+  });
+  
+  $('#xlabel').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({xlabel: newValue});
+    }
+  });
+  
+  $('#ylabel').editable({
+    unsavedclass: null,
+    success: function(r, newValue) {
+      b.refresh({ylabel: newValue});
+    }
+  });
+
+  $('#type').change(function(){
+    b.refresh({type: $(this).val()});
+  });
+
+  $('#history').bootstrapToggle('on');
+  $('#history').change(function() {
+    b.refresh({history: $(this).prop('checked') });
+  });
+
+  $('#xgrid').bootstrapToggle('off');
+  $('#xgrid').change(function() {
+    b.refresh({xgrid: $(this).prop('checked') });
+  });
+
+  $('#ygrid').bootstrapToggle('off');
+  $('#ygrid').change(function() {
+    b.refresh({ygrid: $(this).prop('checked') });
+  });
+
+  $('#points').bootstrapToggle('on');
+  $('#points').change(function() {
+    b.refresh({points: $(this).prop('checked') });
+  });
+
+  $('#tooltips').bootstrapToggle('on');
+  $('#tooltips').change(function() {
+    b.refresh({tooltips: $(this).prop('checked') });
+  });
+
+  b = new builder();
+
+  var pubnub3 = PUBNUB.init({
+    subscribe_key: 'demo'
+  });
+
+  setInterval(function(){
+    pubnub3.publish({
+      channel: 'eon-builder',
+      message: {
+        something: 1,
+        something_else: {
+          another_thing: {
+            value: Math.random() * 100
+          }
+        },
+        a: Math.random() * 100,
+        b: Math.random() * 100,
+        c: Math.random() * 100,
+      }
+    });
+  }, 1000);
+
+  setInterval(function(){
+    pubnub3.publish({
+      channel: 'eon-builder22',
+      message: {
+        something: 1,
+        something_else: {
+          another_thing: {
+            value: Math.random() * 100
+          }
+        },
+        a: Math.random() * 100,
+        b: Math.random() * 100,
+        c: Math.random() * 100,
+        a2: Math.random() * 100,
+        b2: Math.random() * 100,
+        c2: Math.random() * 100,
+        a3: Math.random() * 100,
+        b3: Math.random() * 100,
+        c3: Math.random() * 100,
+        a4: Math.random() * 100,
+        b4: Math.random() * 100,
+        c4: Math.random() * 100,
+        a5: Math.random() * 100,
+        b5: Math.random() * 100,
+        c5: Math.random() * 100
+      }
+    });
+  }, 1000)
