@@ -1,0 +1,159 @@
+/*
+  purple-darkest: #91688C;
+  pubnub-medium:  #6b476c;
+  purple-black:   #3a2b4a;
+  black:          #160e14;
+  red-light:      #b35258;
+  red-dark:       #601e19;
+  blue:           #c7e4de;
+  purple-light:   #91688c;
+*/
+
+body {
+  font-family: 'Open Sans', sans-serif;
+}
+pre {
+background-color: transparent;
+border: none;
+}
+
+h1,h2,h3,h4,h5,h6,p {
+  margin: 20px 0px;
+}
+.first h1,
+.first p {
+  margin: 30px 0px;
+}
+
+#title {
+  opacity: .9;
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  z-index: 2;
+  opacity: .7;
+  color:  #fff;
+}
+
+.logo {
+  font-family: 'Ropa Sans', sans-serif;
+}
+
+#dashboard {
+  position: relative;
+  height: 600px;
+  top: -80px;
+}
+
+#map {
+  width:100%;
+  height: 600px;
+  cursor: default;
+}
+.leaflet-control-container {
+  display: none;
+}
+
+.chart {
+  opacity: .5;
+  z-index: 2;
+  position: absolute;
+}
+.chart.bar {
+  right: 20px;
+  width: 200px;
+  bottom: 300px;
+}
+.chart.spline {
+  right: 20px;
+  width: 200px;
+  bottom: 20px;
+}
+.chart.pie {
+  left: 20px;
+  width: 200px;
+  bottom: 20px;
+}
+#eon-map-demo {
+  height: 350px;
+}
+
+/* */
+
+body {
+background-color: #efefef;
+}
+.first {
+text-align: center;
+padding: 60px;
+}
+.row.divider {
+border-bottom: 1px solid #e7e7e7;
+margin-bottom: 60px;
+}
+.row.examples {
+margin-bottom: 30px;
+}
+.row.title {
+text-align: center;
+margin-bottom: 30px;
+}
+.row.code h4 {
+text-align: center;
+font-weight: bold;
+}
+.row.code pre {
+background-color: #e7e7e7;
+}
+.row.code.divider {
+padding-bottom: 60px;
+}
+.row.charter {
+margin-bottom: 30px;
+}
+.anithumb {
+width: 100%;
+display: block;
+height: 230px;
+background-position: center center;
+-webkit-background-size: cover;
+-moz-background-size: cover;
+-o-background-size: cover;
+background-size: cover;
+border-radius: 3px;
+}
+.demo {
+background-color: #fff;
+}
+pre code {
+text-align: left;
+}
+pre.centered {
+width: 750px;
+margin-left: auto;
+margin-right: auto;
+}
+.heading {
+padding-bottom: 60px;
+text-align: center;
+}
+.heading .details {
+opacity: .7;
+}
+.big-padding-top {
+padding-top: 60px;
+}
+.big-padding-bottom {
+padding-bottom: 60px;
+}
+
+.sub-intro {
+  color: #fff;
+}
+.new {
+  background-color: #fff;
+  margin-top: 0px;
+  text-align: center;
+  padding: 20px 0px;
+  border-bottom: 1px solid #efefef;
+}
