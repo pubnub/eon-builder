@@ -73,7 +73,7 @@ var builder = function(params) {
     self.duration = params.duration || self.duration || 250;
 
     if(typeof self.history == "undefined") {
-      self.history = true;
+      self.history = false;
     }
 
     if(typeof params.history !== "undefined") {
@@ -172,13 +172,14 @@ var builder = function(params) {
       transform: function(message) {
 
         var message = eon.c.flatten(message);
+        var o = {};
 
-        var array = self.cols.map(function(arg){
-          return [self.labels[arg] || arg, message[arg]];
-        });
+        for(index in message) {
+          o[self.labels[index] || index] = message[index];
+        }
 
         return {
-          columns: array
+          eon: o
         };
 
       }
@@ -188,12 +189,7 @@ var builder = function(params) {
       channel: channel,
       message: function(data, a, b) {
 
-        console.log('got dat')
-        console.log(data)
-
         var data = eon.c.flatten(data);
-
-        console.log(data)
 
         for(var key in data) {
 
@@ -448,7 +444,7 @@ $('#type').change(function(){
   b.refresh({type: $(this).val()});
 });
 
-$('#history').bootstrapToggle('on');
+$('#history').bootstrapToggle('off');
 $('#history').change(function() {
   b.refresh({history: $(this).prop('checked') });
 });
