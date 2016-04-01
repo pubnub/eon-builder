@@ -175,7 +175,7 @@ var builder = function(params) {
         var o = {};
 
         for(index in message) {
-          if(self.cols.indexOf(index)){
+          if(self.cols.indexOf(index) > -1){
             o[self.labels[index] || index] = message[index]; 
           }
         }
