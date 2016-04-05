@@ -174,9 +174,7 @@ var builder = function(params) {
       },
       transform: function(message) {
 
-        console.log(message.eon)
-
-        var message = eon.c.flatten(message);
+        var message = eon.c.flatten(message.eon);
         var o = {};
 
         for(index in message) {
@@ -196,7 +194,7 @@ var builder = function(params) {
       channel: channel,
       message: function(data, a, b) {
 
-        var data = eon.c.flatten(data);
+        var data = eon.c.flatten(data.eon);
 
         for(var key in data) {
 
