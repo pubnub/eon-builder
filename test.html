@@ -1,15 +1,15 @@
-<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon-chart.js"></script>
-<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />
+<script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.10/eon.js"></script>
+<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.10/eon.css" />
 <div id="chart"></div>
 <script type="text/javascript">
 var __eon_pubnub = PUBNUB.init({
-  subscribe_key: "demo"
+  subscribe_key: "sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe"
 });
-var __eon_cols = ["something","something_else.another_thing.value","a","b","c"]; 
+var __eon_cols = ["Austin","New York","San Francisco","Portland"]; 
 var __eon_labels = {}; 
 chart = eon.chart({
   pubnub: __eon_pubnub,
-  channel: "eon-builder",
+  channel: "test-channel",
   history: true,
   flow: true,
   rate: 1000,
@@ -17,8 +17,8 @@ chart = eon.chart({
   generate: {
     bindto: "#chart",
     data: {
-      colors: {"something":"#E54028","something_else.another_thing.value":"#F18D05","a":"#113F8C","b":"#01A4A4","c":"#00A1CB"},
-      type: "spline"
+      colors: {"Austin":"#D70060","New York":"#E54028","San Francisco":"#F18D05","Portland":"#113F8C"},
+      type: "bar"
     },
     transition: {
       duration: 250
@@ -47,12 +47,15 @@ chart = eon.chart({
     }
   },
   transform: function(message) {
-    var message = eon.c.flatten(message);
-    var array = __eon_cols.map(function(arg){
-      return [__eon_labels[arg] || arg, message[arg]];
-    });
+    var message = eon.c.flatten(message.eon);
+    var o = {};
+    for(index in message) {
+      if(__eon_cols.indexOf(index) > -1){
+        o[__eon_labels[index] || index] = message[index];
+      }
+    }
     return {
-      columns: array
+      eon: o
     };
   }
 });

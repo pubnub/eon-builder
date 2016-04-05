@@ -115,11 +115,13 @@ var builder = function(params) {
     self.flow = false;
 
     if(self.type == "spline" ||
+      self.type == "line" ||
       self.type == "area" ||
       self.type == "area-spline" ||
       self.type == "step" ||
       self.type == "area-step" ||
-      self.type == "scatter") {
+      self.type == "scatter" ||
+      self.type == "bar") {
 
       self.flow = true;
 
@@ -129,7 +131,7 @@ var builder = function(params) {
       $('#limit-row, #points-row, #xgrid-row, #ygrid-row').hide();
     }
 
-    $('#chart').empty();
+    // self.chart.load({unload: true});
 
     self.chart = eon.chart({
       pubnub: self.pubnub,
@@ -138,7 +140,7 @@ var builder = function(params) {
       flow: self.flow,
       rate: self.rate,
       limit: self.limit,
-      debug: false,
+      debug: true,
       generate: {
         bindto: '#chart',
         data: {
@@ -305,8 +307,8 @@ var builder = function(params) {
   self.embed = function() {
 
     var embedsrc = '' +
-      '<script type="text/javascript" src="http://pubnub.github.io/eon/lib/eon-chart.js"><\/script>\n' +
-      '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/lib/eon.css" />\n' +
+      '<script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.10/eon.js"><\/script>\n' +
+      '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.10/eon.css" />\n' +
       '<div id="chart"></div>\n' + 
       '<script type="text/javascript">\n' +
       'var __eon_pubnub = PUBNUB.init({\n' +
@@ -354,12 +356,15 @@ var builder = function(params) {
       '    }\n' +
       '  },\n' +
       '  transform: function(message) {\n' +
-      '    var message = eon.c.flatten(message);\n' + 
-      '    var array = __eon_cols.map(function(arg){\n' +
-      '      return [__eon_labels[arg] || arg, message[arg]];\n' +
-      '    });\n' +
-      '    return {\n' + 
-      '      columns: array\n' +
+      '    var message = eon.c.flatten(message.eon);\n' +
+      '    var o = {};\n' +
+      '    for(index in message) {\n' +
+      '      if(__eon_cols.indexOf(index) > -1){\n' +
+      '        o[__eon_labels[index] || index] = message[index];\n' +
+      '      }\n' +
+      '    }\n' +
+      '    return {\n' +
+      '      eon: o\n' +
       '    };\n' +
       '  }\n' + 
       '});\n' +
@@ -406,7 +411,7 @@ setInterval(function(){
     }
   });
 
-}, 250);
+}, 1000);
 
 var b;
 
