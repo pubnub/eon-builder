@@ -49,8 +49,8 @@ var defaultColors = [
   '#F18D05'
 ];
 
-var channel = QueryString.channel || 'pubnub-sensor-network';
-var subscribe_key = QueryString.subscribe_key || 'sub-c-5f1b7c8e-fbee-11e3-aa40-02ee2ddab7fe';
+var channel = QueryString.channel || 'test-channel';
+var subscribe_key = QueryString.subscribe_key || 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe';
 
 var builder = function(params) {
 
@@ -129,6 +129,8 @@ var builder = function(params) {
       $('#limit-row, #points-row, #xgrid-row, #ygrid-row').hide();
     }
 
+    $('#chart').empty();
+
     self.chart = eon.chart({
       pubnub: self.pubnub,
       channel: channel,
@@ -136,6 +138,7 @@ var builder = function(params) {
       flow: self.flow,
       rate: self.rate,
       limit: self.limit,
+      debug: false,
       generate: {
         bindto: '#chart',
         data: {
@@ -170,6 +173,8 @@ var builder = function(params) {
         }
       },
       transform: function(message) {
+
+        console.log(message.eon)
 
         var message = eon.c.flatten(message);
         var o = {};
@@ -383,6 +388,27 @@ var builder = function(params) {
   return self;
 
 };
+
+var pnTester = PUBNUB.init({
+  publish_key: 'pub-c-6dbe7bfd-6408-430a-add4-85cdfe856b47',
+  subscribe_key: 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe'
+});
+
+setInterval(function(){
+
+  pnTester.publish({
+    channel: 'test-channel',
+    message: {
+      eon: {
+        'Austin': Math.floor(Math.random() * 99),
+        'New York': Math.floor(Math.random() * 99),
+        'San Francisco': Math.floor(Math.random() * 99),
+        'Portland': Math.floor(Math.random() * 99)
+      }
+    }
+  });
+
+}, 250);
 
 var b;
 
