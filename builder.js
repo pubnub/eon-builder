@@ -396,7 +396,8 @@ var builder = function(params) {
 
 var pnTester = PUBNUB.init({
   publish_key: 'pub-c-6dbe7bfd-6408-430a-add4-85cdfe856b47',
-  subscribe_key: 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe'
+  subscribe_key: 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe',
+  ssl: true
 });
 
 setInterval(function(){
