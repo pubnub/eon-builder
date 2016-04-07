@@ -379,10 +379,12 @@ var builder = function(params) {
   };
 
   self.pubnub = PUBNUB.init({
+    ssl: true,
     subscribe_key: subscribe_key
   });
 
   self.pedit = PUBNUB.init({
+    ssl: true,
     subscribe_key: subscribe_key
   });
 
