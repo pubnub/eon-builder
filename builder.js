@@ -49,7 +49,7 @@ var defaultColors = [
   '#F18D05'
 ];
 
-var channel = QueryString.channel || 'test-channel';
+var channel = QueryString.channel || 'test-channel-' + Math.random();
 var subscribe_key = QueryString.subscribe_key || 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe';
 
 var builder = function(params) {
@@ -403,7 +403,7 @@ var pnTester = PUBNUB.init({
 setInterval(function(){
 
   pnTester.publish({
-    channel: 'test-channel',
+    channel: channel,
     message: {
       eon: {
         'Austin': Math.floor(Math.random() * 99),
