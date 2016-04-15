@@ -50,7 +50,7 @@ var defaultColors = [
 ];
 
 var channel = QueryString.channel || 'test-channel-' + Math.random();
-var subscribe_key = QueryString.subscribe_key || 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe';
+var subscribe_key = QueryString.subscribe_key || 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f';
 
 var builder = function(params) {
 
@@ -372,10 +372,6 @@ var builder = function(params) {
 
       $('#embed').text(embedsrc);
 
-      $('#embed').each(function(i, block) {
-        hljs.highlightBlock(block);
-      });
-
   };
 
   self.pubnub = PUBNUB.init({
@@ -395,9 +391,8 @@ var builder = function(params) {
 };
 
 var pnTester = PUBNUB.init({
-  publish_key: 'pub-c-6dbe7bfd-6408-430a-add4-85cdfe856b47',
-  subscribe_key: 'sub-c-2a73818c-d2d3-11e3-9244-02ee2ddab7fe',
-  ssl: true
+  publish_key: 'pub-c-923938f1-a4c1-4253-b15a-9c24087904c9',
+  subscribe_key: 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f'
 });
 
 setInterval(function(){
