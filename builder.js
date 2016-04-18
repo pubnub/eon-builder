@@ -1,3 +1,5 @@
+$.noConflict();
+jQuery( document ).ready(function( $ ) {
 
 function updateQueryStringParameter(uri, key, value) {
   var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
@@ -499,3 +501,5 @@ $('#tooltips').change(function() {
 });
 
 b = new builder();
+
+});
