@@ -142,7 +142,7 @@ var builder = function(params) {
       flow: self.flow,
       rate: self.rate,
       limit: self.limit,
-      debug: true,
+      debug: false,
       generate: {
         bindto: '#chart',
         data: {
@@ -377,12 +377,12 @@ var builder = function(params) {
   };
 
   self.pubnub = PUBNUB.init({
-    ssl: true,
+    ssl: location.protocol === "https:",
     subscribe_key: subscribe_key
   });
 
   self.pedit = PUBNUB.init({
-    ssl: true,
+    ssl: location.protocol === "https:",
     subscribe_key: subscribe_key
   });
 
@@ -394,7 +394,8 @@ var builder = function(params) {
 
 var pnTester = PUBNUB.init({
   publish_key: 'pub-c-923938f1-a4c1-4253-b15a-9c24087904c9',
-  subscribe_key: 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f'
+  subscribe_key: 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f',
+  ssl: location.protocol === "https:"
 });
 
 setInterval(function(){
