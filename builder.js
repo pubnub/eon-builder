@@ -52,7 +52,7 @@ var defaultColors = [
 ];
 
 var channel = QueryString.channel || 'test-channel-' + Math.random();
-var subscribe_key = QueryString.subscribe_key || 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f';
+var subscribeKey = QueryString.subscribeKey || 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f';
 
 var builder = function(params) {
 
@@ -313,8 +313,8 @@ var builder = function(params) {
       '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.10/eon.css" />\n' +
       '<div id="chart"></div>\n' + 
       '<script type="text/javascript">\n' +
-      'var __eon_pubnub = PUBNUB.init({\n' +
-      '  subscribe_key: "' + subscribe_key + '"\n' +
+      'var __eon_pubnub = new PubNub({\n' +
+      '  subscribeKey: "' + subscribeKey + '"\n' +
       '});\n' +
       'var __eon_cols = ' + JSON.stringify(self.cols) + '; \n' +
       'var __eon_labels = ' + JSON.stringify(self.labels) + '; \n' + 
@@ -376,14 +376,14 @@ var builder = function(params) {
 
   };
 
-  self.pubnub = PUBNUB.init({
+  self.pubnub = new PubNub({
     ssl: location.protocol === "https:",
-    subscribe_key: subscribe_key
+    subscribeKey: subscribeKey
   });
 
-  self.pedit = PUBNUB.init({
+  self.pedit = new PubNub({
     ssl: location.protocol === "https:",
-    subscribe_key: subscribe_key
+    subscribeKey: subscribeKey
   });
 
   self.refresh(params);
@@ -392,9 +392,9 @@ var builder = function(params) {
 
 };
 
-var pnTester = PUBNUB.init({
-  publish_key: 'pub-c-923938f1-a4c1-4253-b15a-9c24087904c9',
-  subscribe_key: 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f',
+var pnTester = new PubNub({
+  publishKey: 'pub-c-923938f1-a4c1-4253-b15a-9c24087904c9',
+  subscribeKey: 'sub-c-bd9ab0d6-6e02-11e5-8d3b-0619f8945a4f',
   ssl: location.protocol === "https:"
 });
 
@@ -423,12 +423,12 @@ var reboot = function(params) {
 }
 
 $('.channel').text(channel);
-$('.subscribe_key').text(subscribe_key);
+$('.subscribeKey').text(subscribeKey);
 
-$('#subscribe_key').editable({
+$('#subscribeKey').editable({
   unsavedclass: null,
   success: function(r, newValue) {
-    var a = updateQueryStringParameter(window.location.href, 'subscribe_key', newValue)
+    var a = updateQueryStringParameter(window.location.href, 'subscribeKey', newValue)
     window.location = a;
   }
 });
