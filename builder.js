@@ -194,11 +194,12 @@ var builder = function(params) {
       }
     });
 
-    self.pedit.subscribe({
-      channel: channel,
-      message: function(data, a, b) {
+  
 
-        var data = eon.c.flatten(data.eon);
+    self.pedit.addListener({
+      message: function(m) {
+
+        var data = eon.c.flatten(m.message.eon);
 
         for(var key in data) {
 
@@ -300,6 +301,10 @@ var builder = function(params) {
         }
 
       }
+    });
+
+    self.pedit.subscribe({
+      channels: [channel]
     });
 
     self.embed();
