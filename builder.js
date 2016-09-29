@@ -314,8 +314,8 @@ var builder = function(params) {
   self.embed = function() {
 
     var embedsrc = '' +
-      '<script type="text/javascript" src="http://pubnub.github.io/eon/v/eon/0.0.10/eon.js"><\/script>\n' +
-      '<link type="text/css" rel="stylesheet" href="http://pubnub.github.io/eon/v/eon/0.0.10/eon.css" />\n' +
+      '<script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/0.1.0/eon.js"><\/script>\n' +
+      '<link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/0.1.0/eon.css" />\n' +
       '<div id="chart"></div>\n' + 
       '<script type="text/javascript">\n' +
       'var __eon_pubnub = new PubNub({\n' +
@@ -428,12 +428,12 @@ var reboot = function(params) {
 }
 
 $('.channel').text(channel);
-$('.subscribeKey').text(subscribeKey);
+$('.subscribe_key').text(subscribeKey);
 
-$('#subscribeKey').editable({
+$('#subscribe_key').editable({
   unsavedclass: null,
   success: function(r, newValue) {
-    var a = updateQueryStringParameter(window.location.href, 'subscribeKey', newValue)
+    var a = updateQueryStringParameter(window.location.href, 'subscribe_key', newValue)
     window.location = a;
   }
 });
