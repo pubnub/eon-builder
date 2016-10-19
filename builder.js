@@ -137,7 +137,7 @@ var builder = function(params) {
 
     self.chart = eon.chart({
       pubnub: self.pubnub,
-      channel: channel,
+      channels: [channel],
       history: self.history,
       flow: self.flow,
       rate: self.rate,
@@ -314,8 +314,8 @@ var builder = function(params) {
   self.embed = function() {
 
     var embedsrc = '' +
-      '<script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/0.1.0/eon.js"><\/script>\n' +
-      '<link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/0.1.0/eon.css" />\n' +
+      '<script type="text/javascript" src="https://pubnub.github.io/eon/v/eon/1.0.0/eon.js"><\/script>\n' +
+      '<link type="text/css" rel="stylesheet" href="https://pubnub.github.io/eon/v/eon/1.0.0/eon.css" />\n' +
       '<div id="chart"></div>\n' + 
       '<script type="text/javascript">\n' +
       'var __eon_pubnub = new PubNub({\n' +
@@ -325,7 +325,7 @@ var builder = function(params) {
       'var __eon_labels = ' + JSON.stringify(self.labels) + '; \n' + 
       'chart = eon.chart({\n' +
       '  pubnub: __eon_pubnub,\n' +
-      '  channel: "' + channel + '",\n' +
+      '  channels: "[' + channel + ']",\n' +
       '  history: ' + self.history + ',\n' +
       '  flow: ' + self.flow +',\n' +
       '  rate: ' + self.rate + ',\n' +
