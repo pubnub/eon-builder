@@ -325,7 +325,7 @@ var builder = function(params) {
       'var __eon_labels = ' + JSON.stringify(self.labels) + '; \n' + 
       'chart = eon.chart({\n' +
       '  pubnub: __eon_pubnub,\n' +
-      '  channels: "[' + channel + ']",\n' +
+      '  channels: ["' + channel + '"],\n' +
       '  history: ' + self.history + ',\n' +
       '  flow: ' + self.flow +',\n' +
       '  rate: ' + self.rate + ',\n' +
