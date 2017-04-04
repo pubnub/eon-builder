@@ -433,7 +433,7 @@ $('.subscribe_key').text(subscribeKey);
 $('#subscribe_key').editable({
   unsavedclass: null,
   success: function(r, newValue) {
-    var a = updateQueryStringParameter(window.location.href, 'subscribe_key', newValue)
+    var a = updateQueryStringParameter(window.location.href, 'subscribeKey', newValue)
     window.location = a;
   }
 });
