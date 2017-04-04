@@ -3351,3 +3351,19 @@ input[type="button"] {
   }
 }
 /* Large devices (large desktops, 1200px and up) */
+.well {
+  background-color: #fff;
+}
+
+.header-big {
+  margin-bottom: 80px;
+  margin-top: 20px;
+}
+
+@media (min-width: 768px) {
+  .preview {
+    position: fixed;
+    right: 0px;
+    top: 20px;
+  }
+}
