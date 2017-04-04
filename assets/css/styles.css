@@ -3358,7 +3358,6 @@ input[type="button"] {
 .header-big {
   margin-top: 20px;
 }
-
 @media (min-width: 768px) {
   .preview {
     position: fixed;
