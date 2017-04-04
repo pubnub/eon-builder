@@ -3365,3 +3365,12 @@ input[type="button"] {
     top: 20px;
   }
 }
+#eon-chart-builder .popover .btn-default {
+  background-color: #ddd;
+}
+#eon-chart-builder h3.popover-title {
+  margin-top: 0px;
+}
+.colorpicker-alpha {
+  display: none !important;
+}

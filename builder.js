@@ -224,7 +224,7 @@ var builder = function(params) {
                   <td class="val col-md-4">' + value + '</td> \
                   <td class="col-md-4"> \
                     <dciv class="input-group colorpick" data-key="' + key + '"> \
-                        <input type="text" value="' + color + '" class="form-control" /> \
+                        <input type="text" value="' + color + '" class="form-control color-value" /> \
                         <span class="input-group-addon"><i></i></span> \
                     </div> \
                   </td> \
