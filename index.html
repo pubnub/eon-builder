@@ -29,7 +29,7 @@
 
     <div class="row">
 
-      <div class="col-sm-7">
+      <div class="col-sm-5">
 
         <div class="header-big">
           <p class="back">
@@ -46,20 +46,7 @@
 
         </div>
 
-      </div>
 
-      <div class="col-sm-5 preview">
-        <div class="well">
-
-          <h2>Chart Preview</h2>
-          <p class="text-muted">Try changing options to see the chart update.</p>
-
-          <div id="chart" style="height: 200px;"></div>
-        </div>
-
-      </div>
-
-      <div class="col-sm-7">
 
         <div class="well">
 
@@ -70,9 +57,9 @@
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th class="col-sm-3">Attribute</th>
-                  <th class="col-sm-3">Value</th>
-                  <th class="col-sm-6">Description</th>
+                  <th class="">Attribute</th>
+                  <th class="">Value</th>
+                  <th class=""></th>
                 </tr>
               </thead>
               <tbody>
@@ -82,7 +69,7 @@
                     <a href="#" id="subscribe_key" data-type="text" data-title="Enter new subscribe key." class="subscribe_key"></a> 
                   </td>
                   <td>
-                    <p class="text-muted">The PubNub subscribe key.</p>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="The PubNub subscribe key."></i>
                   </td>
                 </tr>
                 <tr>
@@ -91,7 +78,7 @@
                     <a href="#" id="channel" data-type="text" data-title="Enter new PubNub channel." class="channel"></a> 
                   </td>
                   <td>
-                    <p class="text-muted">The PubNub channel where your data is being published.</p>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="The PubNub channel where your data is being published."></i>
                   </td>
                 </tr>
                 <tr>
@@ -99,7 +86,9 @@
                   <td>
                     <input type="checkbox" id="history" checked>
                   </td>
-                  <td><p class="text-muted">Use PubNub history to populate the chart on load</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Use PubNub history to populate the chart on load."></i>
+                  </td>
                 </tr>
               </tbody>
             </table>
@@ -118,7 +107,7 @@
                 <th>Label</th>
                 <th>Value</th>
                 <th>Color</th>
-                <th>Graph</th>
+                <th>Plot</th>
               </tr>
             </thead>
             <tbody id="kvs">
@@ -137,9 +126,9 @@
             <table class="table table-bordered table-striped">
               <thead>
                 <tr>
-                  <th class="col-sm-3">Attribute</th>
-                  <th class="col-sm-3">Value</th>
-                  <th class="col-sm-6">Description</th>
+                  <th class="">Attribute</th>
+                  <th class="">Value</th>
+                  <th class=""></th>
                 </tr>
               </thead>
               <tbody>
@@ -160,7 +149,8 @@
                     </select>
                   </td>
                   <td>
-                    <p class="text-muted">Time series, bar, donut, your call.</p></td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Time series, bar, donut, your call."></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>X Axis Label</td>
@@ -181,55 +171,79 @@
                   <td>
                     <a href="#" id="speed" data-type="text" data-title="Enter new speed (ms)">1000</a>
                   </td>
-                  <td><p class="text-muted">How fast your chart will update. If data is published faster than the update rate, it will be overwritten.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="How fast your chart will update. If data is published faster than the update rate, it will be overwritten."></i>
+                  </td>
                 </tr>
                 <tr id="limit-row">
                   <td>Limit</td>
                   <td>
                     <a href="#" id="limit" data-type="text" data-title="Enter new limit">5</a> 
                   </td>
-                  <td><p class="text-muted">How many data points to display.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="How many data points to display."></i>
+                  </td>
                 </tr>
                 <tr id="xgrid-row">
                   <td>X Grid</td>
                   <td>
                     <input type="checkbox" id="xgrid">
                   </td>
-                  <td><p class="text-muted">Show gridlines along x axis.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Show gridlines along x axis."></i>
+                  </td>
                 </tr>
                 <tr id="ygrid-row">
                   <td>Y Grid</td>
                   <td>
                     <input type="checkbox" id="ygrid">
                   </td>
-                  <td><p class="text-muted">Show gridlines along y axis.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Show gridlines along y axis."></i>
+                  </td>
                 </tr>
                 <tr id="points-row">
                   <td>Show Points</td>
                   <td>
                     <input type="checkbox" id="points">
                   </td>
-                  <td><p class="text-muted">Show a point in line.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Show a point in line."></i>
+                  </td>
                 </tr>
                 <tr>
                   <td>Show Tooltips</td>
                   <td>
                     <input type="checkbox" id="tooltips">
                   </td>
-                  <td><p class="text-muted">Show tooltips on hover.</p></td>
+                  <td>
+                    <i class="fa fa-question-circle" data-toggle="tooltip" data-placement="top" title="Show tooltips on hover."></i>
+                  </td>
                 </tr>
               </tbody>
             </table>
           </div>
         </div>
 
+      </div>
+
+      <div class="col-sm-7 preview">
         <div class="well">
 
-          <h2>Embed</h2>
+          <h2>Chart Preview</h2>
+          <p class="text-muted">Try changing options to see the chart update.</p>
+
+          <div id="chart" style="height: 200px;"></div>
+        </div>
+
+
+        <div class="well">
+
+          <h4>Embed</h4>
           <p class="text-muted">Copy and Paste this embed code into your site to display live chart on your website.</p>
 
           <div class="form-group">
-            <textarea class="html" id="embed" class="form-control" style="height: 100px; width: 100%;" /></textarea>
+            <textarea class="html" id="embed" class="form-control" style="height: 100px; width: 100%; font-size: 11px;" /></textarea>
           </div>
 
         </div>

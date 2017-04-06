@@ -508,4 +508,9 @@ $('#tooltips').change(function() {
 
 b = new builder();
 
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
+})
+
 });

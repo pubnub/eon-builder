@@ -1,25 +1,25 @@
-  body {
-    background-color: #efefef;
-  }
-  .well {
-    background-color: #fff;
-  }
-  .javascript {
-    opacity: 1 !important;
-  }
-  body {
-    padding-top: 20px;
-  }
-  .container-fluid {
-    width: 100%;
-  }
-  .well h2 {
-    margin-top: 0px;
-  }
-  .well table, .well .form-group {
-    margin-bottom: 0px;
-  }
-  .fixed {
-    position: fixed;
-    right: 0px;
-  }
+body {
+  background-color: #efefef;
+}
+.well {
+  background-color: #fff;
+}
+.javascript {
+  opacity: 1 !important;
+}
+body {
+  padding-top: 20px;
+}
+.container-fluid {
+  width: 100%;
+}
+.well h2 {
+  margin-top: 0px;
+}
+.well table, .well .form-group {
+  margin-bottom: 0px;
+}
+.fixed {
+  position: fixed;
+  right: 0px;
+}
